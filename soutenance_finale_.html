@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soutenance — Elsa Ortis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1822; --paper:#FBFAF7; --grid:#E4E0D6; --slate:#26425C;
+  --signal:#E8451B; --gold:#A67A08; --muted:#4F5A66; --rule:#BEB8AA; --wash:#F1EFE8; --green:#3D6B4A;
+  --slate-soft:#5E7891;
+  --display:"Fraunces",serif; --body:"Inter",sans-serif; --data:"IBM Plex Mono",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper); color:var(--ink); font-family:var(--body); overflow:hidden; -webkit-font-smoothing:antialiased}
+.stage{position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:34px 34px; opacity:.28}
+.deck{position:fixed; inset:0; z-index:1}
+.slide{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center;
+  padding:6vh 7vw 9vh; opacity:0; visibility:hidden; transform:translateY(14px);
+  transition:opacity .5s ease, transform .5s ease, visibility .5s}
+.slide.active{opacity:1; visibility:visible; transform:none}
+.slide.active .rise{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
+.slide.active .rise:nth-child(2){animation-delay:.06s}
+.slide.active .rise:nth-child(3){animation-delay:.12s}
+.slide.active .rise:nth-child(4){animation-delay:.18s}
+.slide.active .rise:nth-child(5){animation-delay:.24s}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.eyebrow{font-family:var(--data); font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:1.3rem; display:flex; gap:.9rem; align-items:center; font-weight:500}
+.eyebrow::before{content:""; width:38px; height:3px; background:var(--signal)}
+.eyebrow .fn{color:var(--slate-soft); letter-spacing:.1em}
+
+h1{font-family:var(--display); font-weight:600; line-height:1.02; letter-spacing:-.01em}
+h2{font-family:var(--display); font-weight:600; line-height:1.06; letter-spacing:-.015em; font-size:clamp(2.1rem,4.6vw,3.4rem); margin-bottom:1.5rem}
+h2 .sig{color:var(--signal)} h2 .sl{color:var(--slate)}
+p{font-size:clamp(1.08rem,1.55vw,1.3rem); line-height:1.5; max-width:56ch; color:#1E2A35}
+.lead{font-size:clamp(1.2rem,1.9vw,1.5rem); color:#16222E; max-width:58ch; line-height:1.42; font-weight:400}
+.muted{color:var(--muted)} .small{font-size:.9rem} .data{font-family:var(--data)}
+.sig{color:var(--signal)} .sl{color:var(--slate)} .gd{color:var(--gold)}
+strong{font-weight:600} em{font-style:italic}
+
+.claim{border-left:2px solid var(--slate); padding-left:1rem; margin-top:1rem}
+.proof{font-family:var(--data); font-size:.68rem; letter-spacing:.03em; color:var(--muted); margin-top:.4rem; display:flex; align-items:flex-start; gap:.4rem; line-height:1.5}
+.proof::before{content:"preuve"; color:var(--green); font-size:.62rem; text-transform:uppercase; letter-spacing:.08em; padding-top:.02rem; white-space:nowrap}
+.src{font-family:var(--data); font-size:.64rem; letter-spacing:.04em; color:var(--muted); margin-top:.35rem; display:flex; align-items:center; gap:.4rem}
+.src::before{content:"↳"; color:var(--slate-soft)}
+
+.hud{position:fixed; z-index:5; bottom:0; left:0; right:0; height:6vh; display:flex; align-items:center; gap:1.3rem; padding:0 7vw; font-family:var(--data); font-size:.76rem; color:var(--muted); background:linear-gradient(transparent,rgba(251,250,247,.92) 45%)}
+.chrono{cursor:pointer; user-select:none} .chrono b{color:var(--ink)} .chrono.warn b{color:var(--signal)}
+.pill{border:1px solid var(--rule); padding:.16rem .5rem}
+.progress{flex:1; height:2px; background:var(--grid); position:relative}
+.progress i{position:absolute; inset:0 auto 0 0; background:var(--ink); width:0; transition:width .4s}
+.hint{opacity:.55}
+.phase{color:var(--muted); letter-spacing:.1em; text-transform:uppercase; font-size:.64rem; display:flex; align-items:center; gap:.5rem}
+.phase .fn-dot{width:6px; height:6px; border-radius:50%; background:var(--slate-soft)}
+.phase.descente .fn-dot{background:var(--signal)} .phase.dispositif .fn-dot{background:var(--slate)} .phase.remontee .fn-dot{background:var(--green)} .phase.ouverture .fn-dot{background:var(--gold)}
+
+.title-wrap h1{font-size:clamp(2.3rem,5.6vw,4.3rem); max-width:19ch}
+.title-sub{font-family:var(--data); font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:1.8rem; line-height:1.9; max-width:64ch}
+.title-meta{margin-top:2.2rem; display:flex; gap:2.5rem; flex-wrap:wrap; font-family:var(--data); font-size:.78rem; color:var(--muted)}
+.title-meta b{display:block; color:var(--ink); font-weight:600; font-size:.92rem; margin-top:.2rem; font-family:var(--body)}
+
+.cols{display:grid; grid-template-columns:1fr 1fr; gap:3.2vw; align-items:center}
+.cols.lean{grid-template-columns:1.1fr .9fr}
+.cols3{display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem}
+
+.stat{font-family:var(--display); font-weight:600; letter-spacing:-.02em; line-height:.88}
+.big{font-size:clamp(3rem,8.5vw,6.2rem)}
+.stat-block{display:flex; flex-direction:column}
+
+.card{border:1px solid var(--rule); padding:1.25rem 1.35rem; background:rgba(255,255,255,.55)}
+.card .k{font-family:var(--data); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--signal); margin-bottom:.55rem}
+.card .k.sl{color:var(--slate)} .card .k.gd{color:var(--gold)} .card .k.gr{color:var(--green)}
+.card h3{font-family:var(--display); font-size:1.18rem; font-weight:600; margin-bottom:.45rem}
+.card p{font-size:.93rem; max-width:none}
+
+ul.clean{list-style:none; display:flex; flex-direction:column; gap:.8rem; max-width:58ch}
+ul.clean li{display:flex; gap:1rem; font-size:clamp(.98rem,1.35vw,1.14rem); line-height:1.45; color:#26333f}
+ul.clean li .n{font-family:var(--data); color:var(--signal); font-size:.8rem; padding-top:.2rem; min-width:2.4rem}
+ul.clean li .n.sl{color:var(--slate)} ul.clean li .n.gr{color:var(--green)}
+
+/* discarded sources — the researcher rigor slide */
+.discard{display:flex; flex-direction:column; gap:.7rem}
+.discard .d{display:grid; grid-template-columns:auto 1fr auto; gap:1.2rem; align-items:center; border:1px solid var(--rule); padding:.85rem 1.1rem; background:rgba(255,255,255,.5)}
+.discard .d .name{font-family:var(--data); font-size:.9rem; color:var(--ink); font-weight:500; min-width:12ch}
+.discard .d .why{font-size:.92rem; color:#37444f; line-height:1.35}
+.discard .d .verdict{font-family:var(--data); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--signal); border:1px solid var(--signal); padding:.18rem .5rem; white-space:nowrap}
+.discard .keep{border-color:var(--green); background:rgba(74,124,89,.06)}
+.discard .keep .verdict{color:var(--green); border-color:var(--green)}
+.discard .keep .name{color:var(--green)}
+
+.hyp{display:flex; flex-direction:column; gap:.85rem}
+.hyp .row{display:grid; grid-template-columns:auto 1fr auto; gap:1.3rem; align-items:center; border-bottom:1px solid var(--grid); padding-bottom:.85rem}
+.hyp .tag{font-family:var(--data); font-weight:500; color:var(--ink); font-size:1rem}
+.hyp .row p{font-size:.98rem; max-width:none}
+.hyp .verdict{font-family:var(--data); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; padding:.2rem .55rem; border:1px solid}
+.hyp .verdict.ok{color:var(--green); border-color:var(--green)}
+.hyp .verdict.part{color:var(--signal); border-color:var(--signal)}
+
+figure{margin:0}
+figcaption{font-family:var(--data); font-size:.7rem; color:var(--muted); margin-top:.6rem; letter-spacing:.03em}
+.axis-title{font-family:var(--data); font-size:9px; fill:var(--slate); letter-spacing:.02em; text-transform:uppercase}
+.read-hint{font-family:var(--body); font-size:.74rem; color:var(--slate); margin-top:.4rem; padding-left:.7rem; border-left:2px solid var(--signal); line-height:1.4; max-width:52ch}
+.read-hint b{color:var(--ink); font-weight:600}
+.lexbox{border:1px solid var(--rule); border-left:3px solid var(--signal); padding:.85rem 1rem; background:rgba(255,255,255,.5); margin-top:.2rem}
+.lexbox .lx-lead{font-size:.82rem; color:#37444f; margin-bottom:.6rem; line-height:1.4}
+.kw{display:inline-flex; flex-wrap:wrap; gap:.4rem}
+.kw span{font-family:var(--data); font-size:.76rem; padding:.22rem .5rem; border-radius:2px; background:rgba(228,90,42,.09); color:var(--signal); border:1px solid rgba(228,90,42,.25)}
+.kw span.sec{background:rgba(47,74,99,.07); color:var(--slate); border-color:rgba(47,74,99,.2)}
+.lx-group{}
+.lx-tag{font-family:var(--data); font-size:.72rem; font-weight:600; letter-spacing:.02em; margin-bottom:.4rem}
+.thesis{display:flex; gap:.9rem; margin-top:1rem; align-items:stretch}
+.thesis .tcard{flex:1; padding:.85rem 1rem; border-radius:3px}
+.thesis .keep{background:rgba(228,90,42,.08); border:1px solid rgba(228,90,42,.3)}
+.thesis .drop{background:rgba(47,74,99,.05); border:1px dashed rgba(47,74,99,.35)}
+.thesis .tverb{font-family:var(--display); font-size:1.3rem; font-weight:600; line-height:1}
+.thesis .keep .tverb{color:var(--signal)}
+.thesis .drop .tverb{color:var(--slate); text-decoration:line-through; opacity:.7}
+.thesis .tsub{font-family:var(--body); font-size:.76rem; color:#37444f; margin-top:.4rem; line-height:1.35}
+.bignum{display:flex; align-items:baseline; gap:.7rem; margin:.2rem 0 .9rem; padding-bottom:.8rem; border-bottom:1px solid var(--rule)}
+.bignum .bn{font-family:var(--display); font-size:3.4rem; font-weight:600; color:var(--signal); line-height:.9; letter-spacing:-.02em}
+.bignum .bl{font-family:var(--body); font-size:.9rem; color:#37444f; line-height:1.3}
+.regime{padding:.75rem 1rem; margin:.5rem 0; border-radius:3px; display:flex; align-items:baseline; gap:.8rem}
+.regime .rn{font-family:var(--display); font-weight:600; font-size:2rem; line-height:.9; white-space:nowrap}
+.regime .rt{flex:1}
+.regime .rlab{font-family:var(--data); font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; font-weight:600; margin-bottom:.2rem}
+.regime .rtxt{font-size:.8rem; color:#37444f; line-height:1.35}
+.regime.prog{background:rgba(47,74,99,.06); border-left:3px solid var(--slate)}
+.regime.prog .rn, .regime.prog .rlab{color:var(--slate)}
+.regime.rupt{background:rgba(228,90,42,.08); border-left:3px solid var(--signal)}
+.regime.rupt .rn, .regime.rupt .rlab{color:var(--signal)}
+svg{max-width:100%}
+svg .draw{stroke-dasharray:1600; stroke-dashoffset:1600}
+.slide.active svg .draw{animation:draw 1.7s ease forwards .3s}
+.slide.active svg .draw.d2{animation-delay:.7s} .slide.active svg .draw.d3{animation-delay:1.1s}
+@keyframes draw{to{stroke-dashoffset:0}}
+svg .bar{transform:scaleX(0); transform-origin:left}
+.slide.active svg .bar{animation:barIn .9s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes barIn{to{transform:scaleX(1)}}
+
+/* ===== BIBLIOTHÈQUE VISUELLE ANIMÉE ===== */
+/* apparition séquencée d'éléments (pop) */
+.pop{opacity:0}
+.slide.active .pop{animation:pop .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pop{from{opacity:0; transform:translateY(14px) scale(.96)}to{opacity:1; transform:none}}
+.slide.active .pop.p1{animation-delay:.15s}.slide.active .pop.p2{animation-delay:.35s}
+.slide.active .pop.p3{animation-delay:.55s}.slide.active .pop.p4{animation-delay:.75s}
+.slide.active .pop.p5{animation-delay:.95s}.slide.active .pop.p6{animation-delay:1.15s}
+.slide.active .pop.p7{animation-delay:1.35s}.slide.active .pop.p8{animation-delay:1.55s}
+/* fade simple */
+.fade{opacity:0}.slide.active .fade{animation:fadeIn .8s ease both .3s}
+@keyframes fadeIn{to{opacity:1}}
+/* trait qui se trace horizontalement */
+.grow{transform:scaleX(0); transform-origin:left}
+.slide.active .grow{animation:grow .9s cubic-bezier(.3,.7,.3,1) both .4s}
+@keyframes grow{to{transform:scaleX(1)}}
+/* pulse doux d'attention */
+.slide.active .pulse{animation:pulse 2.4s ease-in-out infinite 1.6s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+/* flèche qui glisse */
+.slide.active svg .slidein{animation:slidein 1s cubic-bezier(.3,.7,.3,1) both .6s}
+@keyframes slidein{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+/* compteur/point qui monte le long d'une courbe: dash reveal générique */
+.slide.active svg .drawfast{animation:draw 1.1s ease forwards .3s}
+
+/* --- SCHÉMA : décalage marché / institution (2 barres décalées) --- */
+.lag{display:flex; flex-direction:column; gap:1.5rem; margin-top:.5rem}
+.lag .track{position:relative}
+.lag .tlab{font-family:var(--data); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; margin-bottom:.5rem; display:flex; align-items:center; gap:.5rem}
+.lag .rail{height:22px; border-radius:11px; background:var(--wash); position:relative; overflow:hidden}
+.lag .fill{position:absolute; inset:0 auto 0 0; border-radius:11px}
+.lag .fill.market{background:linear-gradient(90deg,var(--signal),#f0885f); width:92%}
+.lag .fill.inst{background:linear-gradient(90deg,var(--slate),var(--slate-soft)); width:52%}
+.lag .gap-mark{position:absolute; top:-6px; bottom:-6px; border-left:2px dashed var(--gold)}
+.lag .gaplabel{font-family:var(--data); font-size:.7rem; color:var(--gold); font-weight:600}
+
+/* --- SCHÉMA : boîte-métier dont le contenu change --- */
+.jobbox{border:2px solid var(--ink); border-radius:6px; padding:0; overflow:hidden; background:#fff; max-width:340px}
+.jobbox .jlabel{background:var(--ink); color:var(--paper); font-family:var(--data); font-size:.82rem; padding:.5rem .9rem; letter-spacing:.05em; display:flex; justify-content:space-between; align-items:center}
+.jobbox .jlabel .pin{font-size:.62rem; opacity:.7}
+.jobbox .jbody{padding:.9rem; display:flex; flex-wrap:wrap; gap:.45rem}
+.jchip{font-family:var(--data); font-size:.74rem; padding:.25rem .55rem; border-radius:3px; border:1px solid rgba(228,90,42,.3); background:rgba(228,90,42,.08); color:var(--signal)}
+.jchip.old{border-color:rgba(47,74,99,.25); background:rgba(47,74,99,.06); color:var(--slate); text-decoration:line-through; opacity:.6}
+
+/* --- SCHÉMA : offre d'emploi avec surlignage de mots-clés --- */
+.jobad{border:1px solid var(--rule); border-radius:5px; background:#fff; padding:1rem 1.15rem; font-size:.86rem; line-height:1.7; color:#37444f; max-width:none; box-shadow:0 2px 12px rgba(14,24,34,.05)}
+.jobad .h{font-weight:600; color:var(--ink); margin-bottom:.4rem; font-size:.95rem}
+.hl{padding:.05rem .3rem; border-radius:3px; font-weight:600; background:rgba(228,90,42,.16); color:var(--signal); box-shadow:0 0 0 0 rgba(228,90,42,.4)}
+.slide.active .hl{animation:hlpop .5s ease both}
+.slide.active .hl.h2{animation-delay:.9s}.slide.active .hl.h3{animation-delay:1.3s}
+@keyframes hlpop{from{background:transparent;color:#37444f}to{}}
+.counter{font-family:var(--display); font-weight:600; font-size:2.2rem; color:var(--signal); line-height:1}
+
+/* --- SCHÉMA : colonnes qui se remplissent (marché vs référentiel) --- */
+.vscol{display:flex; gap:2rem; align-items:flex-end; height:200px; padding:0 1rem}
+.vscol .col{flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end}
+.vscol .bar2{width:70%; border-radius:5px 5px 0 0; transform:scaleY(0); transform-origin:bottom}
+.slide.active .vscol .bar2{animation:barUp 1.1s cubic-bezier(.3,.7,.3,1) both .5s}
+@keyframes barUp{to{transform:scaleY(1)}}
+.vscol .bar2.market{background:linear-gradient(180deg,var(--signal),#f0885f)}
+.vscol .bar2.ref{background:var(--rule)}
+.vscol .clab{font-family:var(--data); font-size:.74rem; margin-top:.6rem; text-align:center; color:#37444f}
+.vscol .cval{font-family:var(--display); font-weight:600; font-size:1.3rem; margin-bottom:.4rem}
+
+/* --- picto étape numérotée --- */
+.steps3{display:flex; gap:0; align-items:stretch; margin-top:.5rem}
+.steps3 .stp{flex:1; text-align:center; padding:0 .6rem; position:relative}
+.steps3 .stp .circle{width:52px; height:52px; border-radius:50%; margin:0 auto .7rem; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:600; font-size:1.4rem; color:#fff; background:var(--slate)}
+.steps3 .stp:nth-child(3) .circle{background:var(--signal)}
+.steps3 .stp .st{font-weight:600; font-size:.95rem; margin-bottom:.3rem}
+.steps3 .stp .sp{font-size:.8rem; color:#37444f; line-height:1.4}
+.steps3 .conn{flex:0 0 40px; display:flex; align-items:flex-start; justify-content:center; padding-top:26px; color:var(--slate-soft); font-size:1.2rem}
+
+/* keyword chip animé pour lexique */
+.slide.active .kw span{animation:pop .45s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .kw span:nth-child(1){animation-delay:.1s}.slide.active .kw span:nth-child(2){animation-delay:.18s}
+.slide.active .kw span:nth-child(3){animation-delay:.26s}.slide.active .kw span:nth-child(4){animation-delay:.34s}
+.slide.active .kw span:nth-child(5){animation-delay:.42s}.slide.active .kw span:nth-child(6){animation-delay:.5s}
+.slide.active .kw span:nth-child(7){animation-delay:.58s}
+
+/* ===== TOUCHES WAOUH ===== */
+/* tri de sources visuel */
+.sort{display:grid; grid-template-columns:1fr 1fr; gap:.7rem; margin-top:.3rem}
+.sort .src-card{padding:.7rem .9rem; border-radius:6px; display:flex; align-items:center; gap:.8rem; opacity:0}
+.slide.active .sort .src-card{animation:pop .5s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .sort .src-card:nth-child(1){animation-delay:.15s}
+.slide.active .sort .src-card:nth-child(2){animation-delay:.3s}
+.slide.active .sort .src-card:nth-child(3){animation-delay:.45s}
+.slide.active .sort .src-card:nth-child(4){animation-delay:.6s}
+.sort .src-card.out{background:rgba(47,74,99,.05); border:1px solid var(--rule)}
+.sort .src-card.out .sname{text-decoration:line-through; opacity:.6; color:var(--slate)}
+.sort .src-card .ico{font-family:var(--data); font-size:1.1rem; width:28px; text-align:center}
+.sort .src-card.out .ico{color:var(--muted)}
+.sort .sname{font-weight:600; font-size:.92rem; color:var(--ink)}
+.sort .sreason{font-family:var(--data); font-size:.66rem; color:var(--muted); letter-spacing:.02em}
+.sort-keep{margin-top:.7rem; padding:1.1rem 1.3rem; border-radius:8px; background:linear-gradient(135deg,rgba(61,107,74,.12),rgba(61,107,74,.04)); border:2px solid var(--green); display:flex; align-items:center; gap:1.1rem; opacity:0}
+.slide.active .sort-keep{animation:pop .6s cubic-bezier(.2,.8,.2,1) both .8s}
+.sort-keep .kico{font-family:var(--display); font-size:2rem; color:var(--green); font-weight:600; line-height:1}
+.sort-keep .kname{font-family:var(--display); font-weight:600; font-size:1.2rem; color:var(--ink)}
+.sort-keep .kwhy{font-size:.85rem; color:#37444f; line-height:1.4; margin-top:.2rem}
+
+/* grand chiffre héros animé (compteur) */
+.herostat{text-align:center; padding:1rem}
+.herostat .hn{font-family:var(--display); font-weight:600; font-size:5rem; line-height:.85; letter-spacing:-.03em; color:var(--signal)}
+.herostat .hl{font-size:.95rem; color:#37444f; margin-top:.5rem; line-height:1.4}
+.slide.active .herostat .hn{animation:heropop .8s cubic-bezier(.2,.9,.2,1) both .3s}
+@keyframes heropop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+
+/* carte hypothèse avec badge de statut */
+.hyps{display:flex; flex-direction:column; gap:.7rem; margin-top:.3rem}
+.hcard{display:flex; gap:1rem; align-items:flex-start; padding:.9rem 1.1rem; border-radius:7px; border:1px solid var(--rule); background:#fff; opacity:0}
+.slide.active .hcard{animation:slidein-l .6s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .hcard:nth-child(1){animation-delay:.15s}
+.slide.active .hcard:nth-child(2){animation-delay:.35s}
+.slide.active .hcard:nth-child(3){animation-delay:.55s}
+@keyframes slidein-l{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+.hcard .hnum{font-family:var(--display); font-weight:600; font-size:1.5rem; color:var(--slate-soft); line-height:1; min-width:1.5rem}
+.hcard .htext{flex:1; font-size:.92rem; color:#37444f; line-height:1.4}
+.hcard .hbadge{font-family:var(--data); font-size:.66rem; text-transform:uppercase; letter-spacing:.05em; padding:.3rem .6rem; border-radius:20px; white-space:nowrap; font-weight:600; align-self:center}
+.hbadge.ok{background:rgba(61,107,74,.14); color:var(--green)}
+.hbadge.part{background:rgba(166,122,8,.14); color:var(--gold)}
+.hcard.done{border-left:3px solid var(--green)}
+.hcard.partial{border-left:3px solid var(--gold)}
+
+/* posture dialogue en 3 blocs colorés animés */
+.postures{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:.3rem}
+.pcard{border-radius:8px; padding:1.1rem; opacity:0; border-top:4px solid}
+.slide.active .pcard{animation:pop .6s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .pcard:nth-child(1){animation-delay:.2s}
+.slide.active .pcard:nth-child(2){animation-delay:.45s}
+.slide.active .pcard:nth-child(3){animation-delay:.7s}
+.pcard .pverb{font-family:var(--display); font-weight:600; font-size:1.15rem; margin-bottom:.2rem}
+.pcard .pauth{font-family:var(--data); font-size:.7rem; color:var(--muted); margin-bottom:.6rem; letter-spacing:.03em}
+.pcard .pmine{font-size:.84rem; color:#37444f; line-height:1.45}
+.pcard.c-confirm{background:rgba(61,107,74,.07); border-color:var(--green)} .pcard.c-confirm .pverb{color:var(--green)}
+.pcard.c-nuance{background:rgba(166,122,8,.07); border-color:var(--gold)} .pcard.c-nuance .pverb{color:var(--gold)}
+.pcard.c-debat{background:rgba(47,74,99,.06); border-color:var(--slate)} .pcard.c-debat .pverb{color:var(--slate)}
+
+/* limites hiérarchisées en échelle */
+.limscale{display:flex; flex-direction:column; gap:.9rem; margin-top:.5rem}
+.limrow{display:flex; align-items:stretch; gap:1.2rem; opacity:0}
+.slide.active .limrow{animation:slidein-l .6s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .limrow:nth-child(1){animation-delay:.15s}
+.slide.active .limrow:nth-child(2){animation-delay:.35s}
+.slide.active .limrow:nth-child(3){animation-delay:.55s}
+.limrow .weight{flex:0 0 auto; display:flex; align-items:center; gap:.5rem; width:220px}
+.limrow .wbar{height:36px; border-radius:6px; transform:scaleX(0); transform-origin:left}
+.slide.active .limrow .wbar{animation:grow .8s cubic-bezier(.3,.7,.3,1) both .4s}
+.limrow.l1 .wbar{width:100%; background:linear-gradient(90deg,var(--signal),#f0885f)}
+.limrow.l2 .wbar{width:66%; background:linear-gradient(90deg,var(--gold),#c99a2e)}
+.limrow.l3 .wbar{width:38%; background:linear-gradient(90deg,var(--green),#5a8a68)}
+.limrow .wlab{font-family:var(--data); font-size:.64rem; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; font-weight:600}
+.limrow.l1 .wlab{color:var(--signal)} .limrow.l2 .wlab{color:var(--gold)} .limrow.l3 .wlab{color:var(--green)}
+.limrow .lcontent{flex:1}
+.limrow .lh{font-family:var(--display); font-weight:600; font-size:1.05rem; color:var(--ink); margin-bottom:.15rem}
+.limrow .lp{font-size:.85rem; color:#37444f; line-height:1.4}
+
+/* mini-tags sources écartées */
+.src-mini{font-family:var(--data); font-size:.66rem; color:var(--muted); background:rgba(47,74,99,.05); border:1px solid var(--rule); border-radius:4px; padding:.25rem .5rem; letter-spacing:.02em}
+
+/* fil rouge : bandeau "ce résultat répond à" */
+.thread{display:inline-flex; align-items:center; gap:.5rem; font-family:var(--data); font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; padding:.35rem .7rem; border-radius:20px; background:rgba(228,90,42,.09); color:var(--signal); font-weight:600; margin-bottom:.7rem}
+.thread.b-caract{background:rgba(228,90,42,.09); color:var(--signal)}
+.thread.b-decal{background:rgba(166,122,8,.12); color:var(--gold)}
+.thread.b-apport{background:rgba(47,74,99,.09); color:var(--slate)}
+
+/* slide-charnière : rappel de la question à 2 volets */
+.pivot-q{max-width:none; margin-top:.5rem}
+.pivot-lead{font-family:var(--display); font-size:1.5rem; font-weight:500; line-height:1.3; color:var(--ink); margin-bottom:1.5rem}
+.pivot-lead .hl-q{color:var(--signal); font-weight:600}
+.pivot-two{display:grid; grid-template-columns:1fr 1fr; gap:1.2rem}
+.pivot-card{padding:1.3rem 1.5rem; border-radius:10px; opacity:0}
+.slide.active .pivot-card{animation:pop .6s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .pivot-card:nth-child(1){animation-delay:.25s}
+.slide.active .pivot-card:nth-child(2){animation-delay:.5s}
+.pivot-card.v1{background:rgba(228,90,42,.07); border:1px solid rgba(228,90,42,.25)}
+.pivot-card.v2{background:rgba(166,122,8,.08); border:1px solid rgba(166,122,8,.28)}
+.pivot-card .pvn{font-family:var(--data); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; font-weight:600; margin-bottom:.5rem}
+.pivot-card.v1 .pvn{color:var(--signal)} .pivot-card.v2 .pvn{color:var(--gold)}
+.pivot-card .pvverb{font-family:var(--display); font-size:1.4rem; font-weight:600; color:var(--ink); margin-bottom:.4rem}
+.pivot-card .pvtxt{font-size:.9rem; color:#37444f; line-height:1.45}
+.pivot-card .pvmap{font-family:var(--data); font-size:.68rem; color:var(--muted); margin-top:.7rem; padding-top:.6rem; border-top:1px solid var(--rule)}
+
+/* note de synthèse en bas de slide — toujours centrée, largeur contenue */
+.slide .footnote{text-align:center; max-width:74ch; margin-left:auto; margin-right:auto}
+
+/* bande de chiffres-clés du corpus */
+.corpus-band{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:8px; overflow:hidden; margin-top:1.1rem}
+.corpus-band .cb{background:var(--paper); padding:.9rem 1rem; text-align:center}
+.corpus-band .cbn{font-family:var(--display); font-weight:600; font-size:1.5rem; color:var(--signal); line-height:1}
+.corpus-band .cbu{font-size:.85rem; color:var(--muted)}
+.corpus-band .cbl{font-size:.72rem; color:#37444f; margin-top:.35rem; line-height:1.3}
+.slide.active .corpus-band .cb{animation:pop .5s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .corpus-band .cb:nth-child(1){animation-delay:.2s}
+.slide.active .corpus-band .cb:nth-child(2){animation-delay:.35s}
+.slide.active .corpus-band .cb:nth-child(3){animation-delay:.5s}
+.slide.active .corpus-band .cb:nth-child(4){animation-delay:.65s}
+
+/* encart reproductibilité */
+.repro-box{display:flex; gap:.8rem; align-items:flex-start; padding:.85rem 1rem; border-radius:8px; background:linear-gradient(135deg,rgba(47,74,99,.09),rgba(47,74,99,.03)); border:1px solid rgba(47,74,99,.2); font-size:.85rem; color:#37444f; line-height:1.4}
+.repro-box .repro-ico{font-size:1.4rem; color:var(--slate); line-height:1; flex-shrink:0}
+.repro-box u{text-decoration-color:var(--signal); text-underline-offset:2px}
+
+/* slide stats vulgarisée : 4 garde-fous */
+.guards{display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-top:.5rem}
+.guard{padding:1.1rem 1.3rem; border-radius:10px; border:1px solid var(--rule); background:#fff; display:flex; gap:1rem; align-items:flex-start; opacity:0}
+.slide.active .guard{animation:pop .55s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .guard:nth-child(1){animation-delay:.2s}
+.slide.active .guard:nth-child(2){animation-delay:.38s}
+.slide.active .guard:nth-child(3){animation-delay:.56s}
+.slide.active .guard:nth-child(4){animation-delay:.74s}
+.guard .gico{font-family:var(--display); font-weight:600; font-size:1.5rem; color:#fff; background:var(--slate); width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0}
+.guard:nth-child(1) .gico{background:var(--signal)}
+.guard:nth-child(4) .gico{background:var(--green)}
+.guard .gtitle{font-family:var(--display); font-weight:600; font-size:1.05rem; color:var(--ink); margin-bottom:.25rem}
+.guard .gq{font-size:.78rem; color:var(--muted); font-style:italic; margin-bottom:.4rem}
+.guard .ganswer{font-size:.86rem; color:#37444f; line-height:1.4}
+
+/* slide JOCAS détaillée */
+.jocas-hero{display:flex; gap:1rem; align-items:center; padding:1rem 1.3rem; border-radius:10px; background:linear-gradient(135deg,rgba(61,107,74,.1),rgba(61,107,74,.03)); border:1px solid rgba(61,107,74,.3); margin-bottom:1rem}
+.jocas-hero .jh-badge{font-family:var(--display); font-weight:600; font-size:.9rem; color:#fff; background:var(--green); padding:.3rem .7rem; border-radius:4px; white-space:nowrap}
+.jocas-hero .jh-txt{font-size:.9rem; color:#37444f; line-height:1.4}
+.jocas-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:.9rem}
+.jbox{border:1px solid var(--rule); border-radius:9px; padding:.9rem 1rem; background:#fff; opacity:0}
+.slide.active .jbox{animation:pop .5s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .jbox:nth-child(1){animation-delay:.15s}
+.slide.active .jbox:nth-child(2){animation-delay:.28s}
+.slide.active .jbox:nth-child(3){animation-delay:.41s}
+.slide.active .jbox:nth-child(4){animation-delay:.54s}
+.slide.active .jbox:nth-child(5){animation-delay:.67s}
+.slide.active .jbox:nth-child(6){animation-delay:.8s}
+.jbox .jb-h{font-family:var(--data); font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--signal); font-weight:600; margin-bottom:.5rem; display:flex; align-items:center; gap:.4rem}
+.jbox .jb-ico{font-size:.95rem}
+.jbox .jb-c{font-size:.82rem; color:#37444f; line-height:1.45}
+.jbox .jb-c strong{color:var(--ink)}
+.jbox.wide{grid-column:span 3}
+.jbox code{font-family:var(--data); font-size:.76rem; background:rgba(47,74,99,.06); padding:.1rem .35rem; border-radius:3px; color:var(--slate)}
+
+/* bande sources écartées sur la slide JOCAS */
+.discarded-band{margin-top:1rem; padding:.85rem 1.1rem; border-radius:8px; background:rgba(47,74,99,.04); border:1px dashed var(--rule); display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1.2rem}
+.discarded-band .db-label{font-family:var(--data); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:600}
+.discarded-band .db-item{font-size:.78rem; color:#37444f}
+.discarded-band .db-item b{color:var(--slate); font-weight:600}
+.discarded-band .db-item.alt b{color:var(--gold)}
+
+/* journal de recherche : problème → correction */
+.jrnl{display:grid; grid-template-columns:1fr 1fr; gap:.7rem; margin-top:.3rem}
+.jcard{border-radius:8px; overflow:hidden; border:1px solid var(--rule); opacity:0}
+.slide.active .jcard{animation:pop .5s cubic-bezier(.2,.8,.2,1) both}
+.slide.active .jcard:nth-child(1){animation-delay:.15s}
+.slide.active .jcard:nth-child(2){animation-delay:.3s}
+.slide.active .jcard:nth-child(3){animation-delay:.45s}
+.slide.active .jcard:nth-child(4){animation-delay:.6s}
+.jcard.hero{grid-column:1/-1; border:2px solid var(--signal)}
+.jcard .jprob{padding:.6rem .9rem; background:rgba(228,90,42,.07); display:flex; gap:.7rem; align-items:baseline}
+.jcard .jn{font-family:var(--display); font-weight:600; font-size:1.1rem; color:var(--signal); line-height:1}
+.jcard .jptxt{font-size:.86rem; color:var(--ink); line-height:1.35}
+.jcard .jfix{padding:.55rem .9rem; font-size:.82rem; color:#37444f; line-height:1.4; display:flex; gap:.5rem}
+.jcard .jfixlab{font-family:var(--data); font-size:.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--green); font-weight:600; white-space:nowrap; padding-top:.15rem}
+.slide.active .value .v .num{animation:heropop .7s cubic-bezier(.2,.9,.2,1) both}
+.slide.active .value .v:nth-child(1) .num{animation-delay:.25s}
+.slide.active .value .v:nth-child(2) .num{animation-delay:.45s}
+.slide.active .value .v:nth-child(3) .num{animation-delay:.65s}
+
+/* funnel visual for slide */
+.funnel{display:flex; flex-direction:column; align-items:center; gap:0; font-family:var(--data)}
+.funnel .lvl{border:1px solid var(--rule); padding:.7rem 1rem; text-align:center; background:rgba(255,255,255,.5); font-size:.82rem; color:#37444f}
+.funnel .lvl.l1{width:100%} .funnel .lvl.l2{width:76%} .funnel .lvl.l3{width:54%} .funnel .lvl.l4{width:34%; border-color:var(--signal); color:var(--signal); font-weight:500}
+.funnel .arr{color:var(--slate-soft); font-size:.9rem; line-height:1.4}
+.funnel .lvl b{color:var(--ink); font-family:var(--body); font-weight:600}
+
+.value{display:grid; grid-template-columns:repeat(3,1fr); gap:1.3rem}
+.value .v{border:1px solid var(--rule); background:rgba(255,255,255,.55); padding:1.25rem 1.3rem; display:flex; flex-direction:column}
+.value .v .who{font-family:var(--data); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-bottom:.7rem}
+.value .v .num{font-family:var(--display); font-weight:600; font-size:2rem; line-height:.9; color:var(--ink); margin-bottom:.4rem}
+.value .v .num .u{font-size:.85rem; color:var(--gold)}
+.value .v .gain{font-weight:600; font-size:.98rem; margin-bottom:.4rem}
+.value .v p{font-size:.88rem; color:#37444f; max-width:none; line-height:1.4}
+
+.qa-wrap{max-width:900px; width:100%; overflow-y:auto; max-height:76vh; padding-right:1rem}
+.qa{border-bottom:1px solid var(--grid)}
+.qa button{width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:1rem .2rem; display:flex; gap:1.1rem; align-items:baseline; font-family:var(--body); color:var(--ink); font-size:1.02rem}
+.qa button .qn{font-family:var(--data); font-size:.78rem; color:var(--signal); min-width:2.5rem}
+.qa button:hover{color:var(--slate)}
+.qa .ans{max-height:0; overflow:hidden; transition:max-height .4s ease}
+.qa .ans p{padding:0 0 1.1rem 3.6rem; font-size:.95rem; color:#37444f; max-width:78ch}
+.qa.open .ans{max-height:380px}
+.qa button .chev{margin-left:auto; font-family:var(--data); color:var(--muted); transition:transform .3s}
+.qa.open button .chev{transform:rotate(45deg)}
+
+/* theory marker disséminé dans les résultats */
+.theo{display:inline-flex; align-items:center; gap:.45rem; font-family:var(--data); font-size:.66rem; letter-spacing:.04em; color:var(--slate); border:1px solid var(--slate-soft); padding:.22rem .55rem; margin-top:.9rem; background:rgba(47,74,99,.04)}
+.theo::before{content:"cadre théorique"; color:var(--slate-soft); font-size:.58rem; text-transform:uppercase; letter-spacing:.08em}
+.theo b{color:var(--ink); font-weight:600}
+
+/* dialogue avec la littérature — synthèse */
+.dialogue{display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem}
+.dialogue .d{border:1px solid var(--rule); padding:1.25rem 1.3rem; background:rgba(255,255,255,.55); display:flex; flex-direction:column; border-top:3px solid var(--rule)}
+.dialogue .d.confirm{border-top-color:var(--green)}
+.dialogue .d.nuance{border-top-color:var(--slate)}
+.dialogue .d.debat{border-top-color:var(--signal)}
+.dialogue .d .posture{font-family:var(--data); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.5rem}
+.dialogue .d.confirm .posture{color:var(--green)}
+.dialogue .d.nuance .posture{color:var(--slate)}
+.dialogue .d.debat .posture{color:var(--signal)}
+.dialogue .d .auth{font-family:var(--display); font-size:1.15rem; font-weight:600; margin-bottom:.5rem}
+.dialogue .d p{font-size:.9rem; color:#37444f; max-width:none; line-height:1.42}
+.dialogue .d .mine{margin-top:.7rem; padding-top:.7rem; border-top:1px solid var(--grid); font-size:.88rem; color:var(--ink)}
+.dialogue .d .mine b{font-weight:600}
+
+/* journal de recherche — itérations */
+.iterlog{display:grid; grid-template-columns:1fr 1fr; gap:1rem 1.6rem}
+.ilog{border:1px solid var(--rule); border-left:3px solid var(--signal); padding:1rem 1.2rem; background:rgba(255,255,255,.6)}
+.ilog-h{display:flex; gap:.8rem; align-items:baseline; margin-bottom:.6rem}
+.ilog-n{font-family:var(--data); font-size:1.1rem; font-weight:500; color:var(--signal); line-height:1}
+.ilog-t{font-family:var(--display); font-size:1.08rem; font-weight:600; color:var(--ink); line-height:1.2}
+.ilog-t em{font-style:italic; color:var(--signal)}
+.ilog-fix{font-size:.92rem; color:#28333d; line-height:1.4; padding-left:1.9rem}
+.fixlab{font-family:var(--data); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--green); margin-right:.4rem}
+
+/* pipeline data — sous le capot */
+.pipe{display:flex; align-items:stretch; gap:0; margin:.3rem 0 1.3rem}
+.pipe .stage-p{flex:1; border:1px solid var(--rule); border-top:3px solid var(--slate); padding:.9rem 1rem; background:rgba(255,255,255,.6); position:relative}
+.pipe .stage-p .sn{font-family:var(--data); font-size:.62rem; color:var(--slate-soft); letter-spacing:.08em}
+.pipe .stage-p .st{font-family:var(--display); font-size:1.02rem; font-weight:600; margin:.25rem 0 .3rem; color:var(--ink)}
+.pipe .stage-p .sd{font-size:.82rem; color:#28333d; line-height:1.35}
+.pipe .stage-p .sd code{font-family:var(--data); font-size:.76rem; color:var(--signal); background:rgba(232,69,27,.06); padding:.05rem .3rem}
+.pipe .arrow-p{align-self:center; font-family:var(--data); color:var(--slate-soft); font-size:1.2rem; padding:0 .5rem}
+.datafig{display:flex; gap:2.2rem; flex-wrap:wrap; margin-top:.2rem}
+.datafig .df{display:flex; flex-direction:column}
+.datafig .df .n{font-family:var(--display); font-weight:600; font-size:clamp(1.6rem,3vw,2.3rem); color:var(--ink); line-height:1; letter-spacing:-.02em}
+.datafig .df .n .u{font-size:.9rem; color:var(--slate-soft)}
+.datafig .df .l{font-family:var(--data); font-size:.66rem; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; margin-top:.4rem; max-width:20ch; line-height:1.4}
+.chipline{display:inline-flex; gap:.5rem; flex-wrap:wrap; margin-top:.3rem}
+.chip{font-family:var(--data); font-size:.72rem; color:var(--slate); border:1px solid var(--rule); padding:.2rem .55rem; background:rgba(255,255,255,.5)}
+.chip b{color:var(--ink); font-weight:600}
+
+.datagrid{display:grid; grid-template-columns:repeat(4,1fr); gap:1.4rem 1.8rem; margin-top:.4rem}
+.datagrid .df{display:flex; flex-direction:column}
+.datagrid .df .n{font-family:var(--display); font-weight:600; font-size:clamp(1.7rem,3.2vw,2.5rem); color:var(--ink); line-height:1; letter-spacing:-.02em}
+.datagrid .df .n .u{font-size:.85rem; color:var(--slate-soft)}
+.datagrid .df .l{font-family:var(--data); font-size:.68rem; color:var(--muted); letter-spacing:.03em; text-transform:uppercase; margin-top:.45rem; line-height:1.4}
+
+.closing h1{font-size:clamp(1.9rem,4.6vw,3.3rem); max-width:22ch}
+.q-invite{font-family:var(--data); font-size:.82rem; letter-spacing:.14em; text-transform:uppercase; color:var(--signal); margin-top:1.6rem}
+
+@media (max-width:860px){
+  .cols,.cols.lean,.cols3,.value{grid-template-columns:1fr; gap:1.4rem}
+  .discard .d{grid-template-columns:1fr; gap:.5rem}
+  .slide{padding:7vh 8vw 11vh}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:opacity .2s!important} svg .draw{stroke-dashoffset:0} svg .bar{transform:none}}
+</style>
+</head>
+<body>
+<div class="stage"></div>
+<div class="deck" id="deck">
+
+<!-- 1 TITLE -->
+<section class="slide title-wrap">
+  <div class="eyebrow rise">MSc 2 Data Analytics · INSEEC · Soutenance</div>
+  <h1 class="rise">Caractériser l'émergence des compétences liées à l'<span class="sig">intelligence artificielle</span> par les données ouvertes sur l'emploi</h1>
+  <div class="title-sub rise">Une démarche empirique fondée sur la base JOCAS · trajectoires, diffusion et décalage avec les référentiels institutionnels</div>
+  <div class="title-meta rise">
+    <div>Présenté et soutenu par<b>Elsa Ortis</b></div>
+    <div>Directrice de mémoire<b>Linda Attari</b></div>
+    <div>Entreprise<b>Kampus Training — groupe Klanik</b></div>
+  </div>
+</section>
+
+<!-- 2 LARGE : le constat de départ -->
+<section class="slide">
+  <div class="eyebrow rise">Cadre général <span class="fn">· le constat le plus large</span></div>
+  <h2 class="rise">Une technologie ne détruit pas les métiers : elle en <span class="sl">recompose le contenu</span></h2>
+  <div class="cols lean">
+    <div class="rise">
+      <p class="lead">Depuis les grandes vagues technologiques, un constat tient : l'emploi ne s'effondre pas, il se recompose.</p>
+      <p style="margin-top:1rem">Les travaux d'Autor l'ont formalisé : une technologie transforme d'abord les <strong>tâches</strong>, donc les <strong>compétences mobilisées</strong> — bien avant que les métiers, eux, ne changent de nom.</p>
+      <div class="claim">
+        <p class="small">Ce décalage entre la transformation réelle du travail et sa reconnaissance officielle n'est pas accidentel : il est structurel.</p>
+        <div class="proof">Autor (2015) · Perez (2002) · revue de littérature, partie I</div>
+      </div>
+    </div>
+    <div class="rise">
+      <div class="lag">
+        <div class="track pop p1">
+          <div class="tlab" style="color:var(--signal)">● Le marché du travail</div>
+          <div class="rail"><div class="fill market grow"></div></div>
+          <div class="small" style="margin-top:.4rem; color:#37444f">La compétence est déjà demandée dans les offres</div>
+        </div>
+        <div class="track pop p3">
+          <div class="tlab" style="color:var(--slate)">● Les référentiels officiels</div>
+          <div class="rail"><div class="fill inst grow" style="animation-delay:.9s"></div></div>
+          <div class="small" style="margin-top:.4rem; color:#37444f">L'institution ne l'a pas encore codifiée</div>
+        </div>
+        <div class="pop p5" style="text-align:center; border-top:1px dashed var(--gold); padding-top:.9rem">
+          <span class="gaplabel">↔ Ce décalage, structurel, est l'angle mort que je mesure</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 POUR QUI / POURQUOI (public dès le début) -->
+<section class="slide">
+  <div class="eyebrow rise">À qui cette recherche s'adresse <span class="fn">· et pourquoi maintenant</span></div>
+  <h2 class="rise">Trois décideurs, un même angle mort — et ce que je leur apporte</h2>
+  <div class="value rise">
+    <div class="v">
+      <div class="pop p1" style="margin-bottom:.7rem"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6"><path d="M2 8l10-5 10 5-10 5z"/><path d="M6 10v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></div>
+      <div class="who">Organismes de formation</div>
+      <div class="gain" style="color:var(--signal); margin-bottom:.5rem">Le problème</div>
+      <p style="margin-bottom:.7rem">Ils bâtissent leurs programmes sur des référentiels en retard de plusieurs années. Ils forment donc pour hier.</p>
+      <div class="gain" style="color:var(--green)">Mon apport</div>
+      <p>Lire les compétences déjà demandées dans les offres, pour ajuster l'offre avant la concurrence.</p>
+    </div>
+    <div class="v">
+      <div class="pop p2" style="margin-bottom:.7rem"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><circle cx="17" cy="9" r="2.2"/><path d="M15.5 15c2.8.2 5.5 1.8 5.5 5"/></svg></div>
+      <div class="who">Directions RH</div>
+      <div class="gain" style="color:var(--signal); margin-bottom:.5rem">Le problème</div>
+      <p style="margin-bottom:.7rem">Elles recrutent sans savoir quels profils viser, et cherchent parfois des experts qui n'existent pas encore.</p>
+      <div class="gain" style="color:var(--green)">Mon apport</div>
+      <p>Objectiver les compétences réellement associées sur le marché, et savoir s'il faut former ou recruter.</p>
+    </div>
+    <div class="v">
+      <div class="pop p3" style="margin-bottom:.7rem"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V9l7-4 7 4v12"/><path d="M9 21v-5h6v5"/></svg></div>
+      <div class="who">Acteurs publics de l'emploi</div>
+      <div class="gain" style="color:var(--signal); margin-bottom:.5rem">Le problème</div>
+      <p style="margin-bottom:.7rem">Leurs nomenclatures codifient les métiers avec un décalage structurel sur les besoins réels.</p>
+      <div class="gain" style="color:var(--green)">Mon apport</div>
+      <p>Une méthode pour mesurer ce décalage en continu, à partir de données qu'ils produisent déjà.</p>
+    </div>
+  </div>
+  <p class="rise muted small footnote" style="margin-top:1.1rem">Je pose ces trois publics <strong>dès maintenant</strong> : ils sont la raison d'être de ce travail. J'y reviendrai à la fin, pour leur livrer une valeur chiffrée.</p>
+</section>
+
+<!-- 4 RESSERRE : l'angle mort -->
+<section class="slide">
+  <div class="eyebrow rise">Je resserre <span class="fn">· vers l'objet précis</span></div>
+  <h2 class="rise">Un métier émergent n'est pas un nom nouveau : c'est un <span class="sl">assemblage de compétences</span></h2>
+  <div class="cols">
+    <div class="rise">
+      <p class="lead">La sociologie des professions d'Abbott m'a fourni ma définition de travail : un métier émerge lorsqu'une <strong>combinaison de compétences</strong> se répète, se renforce, et se diffuse d'un groupe professionnel à un autre.</p>
+      <p style="margin-top:1rem">J'en tire une conséquence directe : je n'étudie pas des métiers déclarés, mais des <strong>configurations de compétences</strong> qui se forment dans les données, avant toute reconnaissance institutionnelle.</p>
+      <div class="claim" style="margin-top:1rem">
+        <p class="small">Les projections DARES à l'<strong>horizon 2030</strong> le confirment : au sein d'un même métier, les profils recherchés se déforment nettement — sans que la nomenclature, elle, ne change.</p>
+        <div class="proof">DARES · projections métiers-qualifications 2030</div>
+      </div>
+    </div>
+    <div class="rise">
+      <div class="pop p1" style="font-family:var(--data); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:.6rem">Même métier, deux époques :</div>
+      <div class="jobbox pop p2" style="margin-bottom:.5rem">
+        <div class="jlabel">Data scientist <span class="pin">2019</span></div>
+        <div class="jbody">
+          <span class="jchip old">machine learning</span><span class="jchip old">R</span><span class="jchip old">statistiques</span><span class="jchip old">SQL</span>
+        </div>
+      </div>
+      <div class="pop p3" style="text-align:center; color:var(--slate-soft); font-size:1.3rem; line-height:1">↓</div>
+      <div class="jobbox pop p4" style="margin-top:.5rem; border-color:var(--signal)">
+        <div class="jlabel" style="background:var(--signal)">Data scientist <span class="pin">2025</span></div>
+        <div class="jbody">
+          <span class="jchip">LLM</span><span class="jchip">RAG</span><span class="jchip">MLOps</span><span class="jchip">Python</span><span class="jchip">Cloud</span>
+        </div>
+      </div>
+      <p class="pop p5 small" style="margin-top:.9rem; color:#37444f"><strong>L'étiquette ne bouge pas. Le contenu, si.</strong> Voilà pourquoi j'observe les compétences, pas les intitulés.</p>
+      <div class="theo pop p6"><b>Autor (2015)</b> → j'en déduis mon unité d'analyse</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 POINTE : la question de recherche -->
+<section class="slide">
+  <div class="eyebrow rise">La pointe de l'entonnoir <span class="fn">· ma question</span></div>
+  <h2 class="rise">Ma problématique, et une thèse que j'assume</h2>
+  <div class="cols lean">
+    <div class="rise">
+      <p class="lead">Dans quelle mesure les données ouvertes sur l'emploi permettent-elles de <strong>caractériser</strong> l'émergence des compétences liées à l'IA, et de mettre en évidence le <strong>décalage</strong> entre les besoins du marché et les référentiels institutionnels ?</p>
+      <div class="thesis">
+        <div class="tcard keep">
+          <div class="tverb">Caractériser</div>
+          <div class="tsub">Décrire précisément ce qui émerge, quand, et où. Ma thèse.</div>
+        </div>
+        <div class="tcard drop">
+          <div class="tverb">Prédire</div>
+          <div class="tsub">Annoncer le futur du marché. Ce que je démontre comme <strong>impossible</strong> pour les ruptures.</div>
+        </div>
+      </div>
+    </div>
+    <div class="rise">
+      <div class="funnel">
+        <div class="lvl l1">Transformations du travail par la technologie</div>
+        <div class="arr">↓</div>
+        <div class="lvl l2">Émergence au niveau des <b>compétences</b></div>
+        <div class="arr">↓</div>
+        <div class="lvl l3">Observables dans les <b>offres d'emploi</b></div>
+        <div class="arr">↓</div>
+        <div class="lvl l4">Compétences IA · informatique<br><span style="font-size:.72rem; opacity:.85">ROME M18 · 82 mois · 2019→2025</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOCAS DÉTAILLÉE : la source, béton -->
+<section class="slide">
+  <div class="eyebrow rise">Ma source principale <span class="fn">· une base de la statistique publique</span></div>
+  <h2 class="rise">JOCAS — une base <span class="sl">officielle, massive et datée au jour près</span></h2>
+  <div class="jocas-hero rise">
+    <div class="jh-badge">JOCAS · DARES</div>
+    <div class="jh-txt">Base d'offres d'emploi collectées par la statistique publique, <strong>alimentée en continu depuis 2019</strong>. L'une des rares sources françaises à réunir granularité textuelle fine <em>et</em> profondeur temporelle réelle.</div>
+  </div>
+  <div class="jocas-grid rise">
+    <div class="jbox">
+      <div class="jb-h"><span class="jb-ico">📊</span> Volume</div>
+      <div class="jb-c">Plusieurs <strong>dizaines de milliers d'offres par jour</strong>. Jusqu'à <strong>195 000/mois</strong> sur le périmètre informatique. Des séries d'une grande stabilité statistique.</div>
+    </div>
+    <div class="jbox">
+      <div class="jb-h"><span class="jb-ico">🗂️</span> Variables exploitées</div>
+      <div class="jb-c">Intitulé du poste · <strong>description complète</strong> (texte libre) · <strong>code ROME</strong> du métier · famille professionnelle · <strong>date au jour près</strong>.</div>
+    </div>
+    <div class="jbox">
+      <div class="jb-h"><span class="jb-ico">🔒</span> Accès sécurisé</div>
+      <div class="jb-c">Hébergée sur le <strong>SSP Cloud de l'Insee</strong>. Analyse <strong>in situ</strong> via <code>s3fs</code> / MinIO — aucune donnée brute ne sort, seuls les résultats agrégés.</div>
+    </div>
+    <div class="jbox">
+      <div class="jb-h"><span class="jb-ico">🎯</span> Périmètre</div>
+      <div class="jb-c">Restreint aux métiers informatiques : <strong>codes ROME M18</strong>. Du développement à la sécurité, la data, la DSI et le support.</div>
+    </div>
+    <div class="jbox">
+      <div class="jb-h"><span class="jb-ico">🧹</span> Détection propre</div>
+      <div class="jb-c">Regex à <strong>frontières de mots</strong> <code>\b</code> : « RAG » n'est plus confondu avec <em>tirage</em> ou <em>forage</em>. Même règle appliquée aux offres <em>et</em> au ROME.</div>
+    </div>
+    <div class="jbox">
+      <div class="jb-h"><span class="jb-ico">⚖️</span> Rendu comparable</div>
+      <div class="jb-c">Normalisation <strong>pour 1000 offres</strong> (le volume varie de 195 000 à &lt;30 000/mois) + <strong>lissage 3 mois</strong> pour les petits effectifs.</div>
+    </div>
+  </div>
+  <div class="rise discarded-band">
+    <span class="db-label">Avant d'en arriver à JOCAS, j'ai cherché et écarté :</span>
+    <span class="db-item"><b>✕ LinkedIn</b> · collecte interdite par les CGU</span>
+    <span class="db-item"><b>✕ Welcome to the Jungle</b> · idem, CGU</span>
+    <span class="db-item"><b>✕ Dataset public</b> · corpus trop américain</span>
+    <span class="db-item alt"><b>↺ Adzuna · France Travail</b> · gardées pour la validation (pas d'historique)</span>
+  </div>
+</section>
+
+<!-- 5+6 MÉTHODE COMPACTE : détection + lexique -->
+<section class="slide">
+  <div class="eyebrow rise">Ma détection <span class="fn">· du texte de l'offre au signal mesuré</span></div>
+  <h2 class="rise">Comment je repère l'IA — de façon <span class="sl">explicable et reproductible</span></h2>
+  <div class="cols">
+    <div class="rise" style="display:flex; flex-direction:column">
+      <div class="pop p1" style="font-family:var(--data); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:.6rem; text-align:center">Dans chaque offre, je repère chaque compétence séparément</div>
+      <div class="jobad pop p2">
+        <div class="h">Ingénieur Data — CDI</div>
+        Vous concevrez des pipelines et déploierez des modèles de <span class="hl">machine learning</span> en production. Maîtrise de <span class="hl h2">Python</span> exigée. Une expérience en <span class="hl h3">LLM</span> et <span class="hl h3">RAG</span> serait un vrai plus.
+      </div>
+      <p class="small muted pop p3" style="margin:.7rem auto 0; text-align:center; max-width:46ch">Une compétence est comptée <strong>dès qu'un de ses mots-clés apparaît</strong> (mot entier). Ici, 4 compétences distinctes — pas besoin qu'elles soient toutes réunies. « RAG » ne compte pas dans <em>tirage</em>.</p>
+      <div class="pop p4" style="text-align:center; color:var(--slate-soft); font-size:1.4rem; line-height:1; margin:.7rem 0">↓</div>
+      <div class="pop p5" style="padding:.9rem 1.2rem; border:1px solid var(--rule); border-radius:10px; background:#fff; text-align:center">
+        <div style="font-family:var(--data); font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:.5rem">Fréquence d'une compétence, un mois donné</div>
+        <div style="font-size:.92rem; color:var(--ink); line-height:1.5"><span style="color:var(--signal); font-weight:600">offres contenant la compétence</span> <span style="color:var(--muted)">÷</span> <span style="color:var(--slate); font-weight:600">total des offres du mois</span> <span style="color:var(--muted)">× 1000</span></div>
+        <div class="small muted" style="margin-top:.5rem">→ une <strong>fréquence pour 1000 offres</strong>, comparable d'un mois à l'autre</div>
+      </div>
+      <p class="small muted pop p6" style="margin-top:.9rem; text-align:center; max-width:44ch; margin-left:auto; margin-right:auto">Pourquoi diviser ? Parce que le volume varie de 195 000 à &lt;30 000 offres/mois — sinon je confondrais la compétence et le marché.</p>
+    </div>
+    <div class="rise">
+      <div class="lexbox">
+        <div class="lx-lead"><strong>Mon lexique de détection</strong>, construit depuis les référentiels puis complété à la main. Deux groupes que je compare :</div>
+        <div class="lx-group">
+          <div class="lx-tag" style="color:var(--signal)">▲ Ce que je traque : les compétences IA émergentes</div>
+          <div class="kw">
+            <span>IA générative</span><span>LLM</span><span>RAG</span><span>modèle de langage</span><span>génératif</span><span>Langchain</span><span>MLOps</span>
+          </div>
+        </div>
+        <div class="lx-group" style="margin-top:.7rem">
+          <div class="lx-tag" style="color:var(--slate)">● Mon groupe témoin : les compétences déjà installées</div>
+          <div class="kw">
+            <span class="sec">machine learning</span><span class="sec">deep learning</span><span class="sec">Python</span><span class="sec">Cloud</span>
+          </div>
+        </div>
+      </div>
+      <div class="read-hint" style="margin-top:.7rem"><b>L'idée :</b> si les termes émergents explosent pendant que les témoins restent stables, la hausse est un vrai signal du marché — pas un artefact de ma collecte.</div>
+      <div class="repro-box" style="margin-top:.7rem">
+        <div class="repro-ico">⟳</div>
+        <div><strong>Une méthode, pas qu'un résultat.</strong> Le même code s'applique à <u>tout autre secteur</u> : il suffit de changer le lexique et les codes métier. J'ai construit un instrument généralisable.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 HYPOTHESES -->
+<section class="slide">
+  <div class="eyebrow rise">Ce que je mets à l'épreuve <span class="fn">· trois hypothèses</span></div>
+  <h2 class="rise">Trois hypothèses, éprouvées sur les données</h2>
+  <div class="hyps rise">
+    <div class="hcard done">
+      <div class="hnum">H1</div>
+      <div class="htext">Les données ouvertes contiennent des <strong>signaux exploitables</strong> pour caractériser l'émergence des compétences IA.</div>
+      <div class="hbadge ok">✓ validée</div>
+    </div>
+    <div class="hcard done">
+      <div class="hnum">H2</div>
+      <div class="htext">Ces compétences apparaissent dans les offres <strong>avant</strong> d'être reconnues par les référentiels.</div>
+      <div class="hbadge ok">✓ validée · précisée</div>
+    </div>
+    <div class="hcard partial">
+      <div class="hnum">H3</div>
+      <div class="htext">Le dispositif produit une information <strong>actionnable</strong>, sans relever de la prédiction déterministe.</div>
+      <div class="hbadge part">◐ partiellement</div>
+    </div>
+  </div>
+  <p class="rise muted small footnote" style="margin-top:1.3rem">Je valide H3 <em>partiellement</em>, et je le revendique : refuser une validation maximaliste fragile est une exigence de <strong>probité</strong>, non une faiblesse.</p>
+</section>
+
+<!-- CHARNIÈRE : rappel de la question avant les résultats -->
+<section class="slide">
+  <div class="eyebrow rise">Place aux résultats <span class="fn">· ce que mes données répondent</span></div>
+  <h2 class="rise">Ma question, en <span class="sl">deux volets</span> — et cinq résultats pour y répondre</h2>
+  <div class="pivot-q rise">
+    <div class="pivot-lead">Dans quelle mesure les données ouvertes permettent-elles de <span class="hl-q">caractériser l'émergence</span> des compétences IA, et de <span class="hl-q">révéler le décalage</span> avec les référentiels ?</div>
+    <div class="pivot-two">
+      <div class="pivot-card v1">
+        <div class="pvn">Volet 1</div>
+        <div class="pvverb">Caractériser l'émergence</div>
+        <div class="pvtxt">Quand, où, et sous quelle forme les compétences IA apparaissent-elles dans le marché ?</div>
+        <div class="pvmap">→ Résultats 1, 2, 3 : la rupture · la diffusion · le profil</div>
+      </div>
+      <div class="pivot-card v2">
+        <div class="pvn">Volet 2</div>
+        <div class="pvverb">Révéler le décalage</div>
+        <div class="pvtxt">L'écart entre ce que le marché demande et ce que l'institution reconnaît.</div>
+        <div class="pvmap">→ Résultat 4 : le décalage ROME · puis mon apport : les deux régimes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 RESULT 1 -->
+<section class="slide">
+  <div class="eyebrow rise">Résultat 1 · H1 <span class="fn">· je remonte vers les constats</span></div>
+  <h2 class="rise">Une rupture <span class="sig">nette et datée</span> : juin 2023</h2>
+  <div class="cols">
+    <figure class="rise">
+      <svg viewBox="0 0 560 290" width="100%" font-family="IBM Plex Mono">
+        <!-- legend -->
+        <g font-size="11">
+          <rect x="42" y="8" width="18" height="3" fill="var(--signal)"/>
+          <text x="66" y="12" fill="var(--ink)">IA générative (LLM, RAG)</text>
+          <rect x="240" y="8" width="18" height="3" fill="var(--slate-soft)"/>
+          <text x="264" y="12" fill="var(--muted)">machine learning</text>
+        </g>
+        <!-- axes -->
+        <line x1="52" y1="248" x2="540" y2="248" stroke="var(--rule)"/>
+        <line x1="52" y1="30" x2="52" y2="248" stroke="var(--rule)"/>
+        <!-- Y graduations -->
+        <g font-size="10" fill="var(--muted)" text-anchor="end">
+          <line x1="49" y1="248" x2="52" y2="248" stroke="var(--rule)"/><text x="44" y="251">0</text>
+          <line x1="49" y1="193" x2="540" y2="193" stroke="var(--rule)" opacity=".3"/><text x="44" y="196">10</text>
+          <line x1="49" y1="138" x2="540" y2="138" stroke="var(--rule)" opacity=".3"/><text x="44" y="141">20</text>
+          <line x1="49" y1="83" x2="540" y2="83" stroke="var(--rule)" opacity=".3"/><text x="44" y="86">30</text>
+        </g>
+        <!-- axis titles -->
+        <text class="axis-title" transform="rotate(-90)" x="-140" y="16" text-anchor="middle">mentions / 1000 offres</text>
+        <text class="axis-title" x="296" y="286" text-anchor="middle">année</text>
+        <!-- ChatGPT + bascule markers -->
+        <line x1="330" y1="30" x2="330" y2="248" stroke="var(--muted)" stroke-dasharray="3 4" opacity=".4"/>
+        <text x="334" y="44" font-size="10" fill="var(--muted)">ChatGPT · nov. 2022</text>
+        <line x1="372" y1="30" x2="372" y2="248" stroke="var(--signal)" stroke-dasharray="3 4" opacity=".6"/>
+        <text x="376" y="70" font-size="10" fill="var(--signal)" font-weight="500">bascule · juin 2023</text>
+        <!-- ML stable -->
+        <path class="draw" d="M52,220 L140,217 L230,221 L320,218 L410,216 L480,214 L540,212" fill="none" stroke="var(--slate-soft)" stroke-width="2.5"/>
+        <!-- IA générative rupture -->
+        <path class="draw d2" d="M52,247 L230,247 L372,245 L410,228 L455,175 L500,110 L540,44" fill="none" stroke="var(--signal)" stroke-width="3"/>
+        <!-- x labels -->
+        <g font-size="10" fill="var(--muted)">
+          <text x="52" y="266" text-anchor="middle">2019</text>
+          <text x="296" y="266" text-anchor="middle">2022</text>
+          <text x="540" y="266" text-anchor="middle">2025</text>
+        </g>
+      </svg>
+      <figcaption>Mentions par compétence, offres informatiques.</figcaption>
+      <div class="read-hint"><b>Comment lire :</b> l'axe horizontal, c'est le temps (2019→2025) ; l'axe vertical, le nombre de mentions pour 1000 offres. La courbe rouge (IA générative) décolle après juin 2023 ; la grise (machine learning) reste plate.</div>
+      <div class="src">JOCAS (DARES) · 2019-2025 · codes ROME M18</div>
+    </figure>
+    <div class="rise">
+      <div class="thread b-caract">◆ Volet 1 · caractériser — le « quand »</div>
+      <p class="lead">Un basculement daté : l'IA générative, quasi absente jusqu'au printemps 2023, décolle en juin — sept mois après ChatGPT.</p>
+      <div class="bignum">
+        <div class="bn">×35</div>
+        <div class="bl">plus de <strong>mentions</strong> après qu'avant juin 2023<br><span style="font-size:.76rem; color:var(--muted)">120 mentions cumulées avant → plus de 4 000 après · source JOCAS</span></div>
+      </div>
+      <p class="small muted" style="margin:-.3rem 0 .7rem; font-style:italic">Une « mention » = une offre où apparaît un terme d'IA générative (LLM, RAG, IA générative…). Je cumule ces apparitions sur chaque période.</p>
+      <div class="claim">
+        <p class="small">Preuve que le signal est réel : le LLM passe de <strong>&lt;1</strong> à <strong>289 mentions/mois</strong>, mais le machine learning reste stable à <strong>~9‰</strong>. Un biais de collecte aurait tout déplacé — ici, seul le génératif bouge.</p>
+        <div class="proof">test de spécificité · JOCAS, trajectoires mensuelles</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 RESULT 2 diffusion -->
+<section class="slide">
+  <div class="eyebrow rise">Résultat 2 <span class="fn">· un résultat contre-intuitif</span></div>
+  <h2 class="rise">La diffusion suit la <span class="sl">proximité d'usage</span>, pas la proximité scientifique</h2>
+  <div class="cols">
+    <figure class="rise">
+      <svg viewBox="0 0 560 250" width="100%" font-family="IBM Plex Mono">
+        <!-- plot area: x 42-400 · label column x 410-560 -->
+        <line x1="42" y1="212" x2="400" y2="212" stroke="var(--rule)"/>
+        <line x1="42" y1="20" x2="42" y2="212" stroke="var(--rule)"/>
+        <!-- Y graduations : pic dev >24, sécurité ~12 -->
+        <g font-size="10" fill="var(--muted)" text-anchor="end">
+          <text x="34" y="215">0</text>
+          <line x1="39" y1="148" x2="400" y2="148" stroke="var(--rule)" opacity=".3"/><text x="34" y="151">8</text>
+          <line x1="39" y1="84" x2="400" y2="84" stroke="var(--rule)" opacity=".3"/><text x="34" y="87">16</text>
+          <line x1="39" y1="40" x2="400" y2="40" stroke="var(--rule)" opacity=".3"/><text x="34" y="43">24</text>
+        </g>
+        <text class="axis-title" transform="rotate(-90)" x="-116" y="14" text-anchor="middle">offres / 1000</text>
+        <text class="axis-title" x="221" y="248" text-anchor="middle">année</text>
+        <!-- Développement -->
+        <path class="draw" d="M42,210 L150,208 L215,197 L270,167 L315,112 L360,72 L400,40" fill="none" stroke="var(--signal)" stroke-width="3"/>
+        <circle cx="400" cy="40" r="3" fill="var(--signal)"/>
+        <text x="410" y="37" font-size="11" fill="var(--signal)" font-weight="500">1· Développement</text>
+        <text x="410" y="51" font-size="9" fill="var(--muted)">~¾ des mentions</text>
+        <!-- Sécurité -->
+        <path class="draw d2" d="M42,211 L190,210 L260,202 L305,177 L350,142 L400,112" fill="none" stroke="var(--slate)" stroke-width="2.5"/>
+        <circle cx="400" cy="112" r="3" fill="var(--slate)"/>
+        <text x="410" y="115" font-size="11" fill="var(--slate)">2· Sécurité</text>
+        <!-- Data -->
+        <path class="draw d3" d="M42,211 L245,211 L300,206 L345,192 L400,168" fill="none" stroke="var(--slate-soft)" stroke-width="2.5"/>
+        <circle cx="400" cy="168" r="3" fill="var(--slate-soft)"/>
+        <text x="410" y="171" font-size="11" fill="var(--slate-soft)">3· Data</text>
+        <!-- x labels -->
+        <g font-size="10" fill="var(--muted)">
+          <text x="42" y="230" text-anchor="middle">2023</text>
+          <text x="400" y="230" text-anchor="middle">2025</text>
+        </g>
+      </svg>
+      <figcaption>Ordre d'adoption de l'IA générative par métier.</figcaption>
+      <div class="read-hint"><b>Comment lire :</b> chaque courbe est un métier ; plus elle monte, plus ce métier mentionne l'IA générative. Le développement (rouge) décolle le premier, la data (gris clair) en dernier — l'ordre d'adoption se lit de gauche à droite.</div>
+      <div class="src">JOCAS (DARES) · 2023-2025</div>
+    </figure>
+    <div class="rise">
+      <div class="thread b-caract">◆ Volet 1 · caractériser — le « où en premier »</div>
+      <p class="lead">Je m'attendais à voir la data adopter l'IA générative en premier. Or ce sont les métiers du <strong>développement</strong> qui mènent — la data n'arrive qu'en troisième position.</p>
+      <div class="claim" style="margin-top:.8rem">
+        <p class="small">Sur <strong>toutes les mentions d'IA générative</strong> du corpus, réparties entre les 6 familles de métiers M18 :</p>
+        <ul class="clean" style="margin-top:.4rem">
+          <li style="padding:.15rem 0"><span style="color:var(--signal); font-weight:600; font-family:var(--data)">~¾</span> &nbsp;Développement — décolle févr. 2024, pic <strong>&gt;24 offres/1000</strong></li>
+          <li style="padding:.15rem 0"><span style="color:var(--slate); font-weight:600; font-family:var(--data)">2ᵉ</span> &nbsp;Sécurité / conseil SI — mars 2024, plafonne <strong>~12/1000</strong></li>
+          <li style="padding:.15rem 0"><span style="color:var(--muted); font-weight:600; font-family:var(--data)">3ᵉ</span> &nbsp;Data / expertise — seulement déc. 2024</li>
+        </ul>
+      </div>
+      <p style="margin-top:.7rem" class="small">Mon interprétation : l'IA générative se diffuse d'abord là où on l'<em>utilise</em> (le développement), pas là où on l'étudie (la data).</p>
+      <div class="theo"><b>Abbott (1988)</b> → cet ordre valide empiriquement sa théorie des juridictions</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 profil -->
+<section class="slide">
+  <div class="eyebrow rise">Résultat 2 · le profil qui se forme</div>
+  <h2 class="rise">Le métier émergent est un <span class="sl">profil hybride</span></h2>
+  <div class="cols lean">
+    <figure class="rise">
+      <svg viewBox="0 0 620 250" width="100%" font-family="IBM Plex Mono">
+        <!-- label column: x 0-170 reserved · bars start at 180 · scale: 55%=380px -->
+        <g font-size="13" fill="var(--ink)">
+          <text x="0" y="30">Python</text>
+          <text x="0" y="72">Cloud</text>
+          <text x="0" y="114" fill="var(--signal)">Machine learning</text>
+          <text x="0" y="156">Docker / API</text>
+          <text x="0" y="198" fill="var(--signal)">Data science</text>
+        </g>
+        <!-- baseline -->
+        <line x1="180" y1="16" x2="180" y2="212" stroke="var(--rule)"/>
+        <g>
+          <rect class="bar" x="180" y="20" width="380" height="16" fill="var(--slate)"/>
+          <rect class="bar" x="180" y="62" width="304" height="16" fill="var(--slate)" style="animation-delay:.1s"/>
+          <rect class="bar" x="180" y="104" width="193" height="16" fill="var(--signal)" style="animation-delay:.2s"/>
+          <rect class="bar" x="180" y="146" width="159" height="16" fill="var(--slate)" style="animation-delay:.3s"/>
+          <rect class="bar" x="180" y="188" width="152" height="16" fill="var(--signal)" style="animation-delay:.4s"/>
+        </g>
+        <g font-size="12" fill="var(--muted)">
+          <text x="568" y="33">55%</text>
+          <text x="492" y="75">44%</text>
+          <text x="381" y="117">28%</text>
+          <text x="347" y="159">23%</text>
+          <text x="340" y="201">22%</text>
+        </g>
+        <text class="axis-title" x="370" y="238" text-anchor="middle">part des offres où la compétence apparaît (%)</text>
+      </svg>
+      <figcaption>Compétences associées à l'IA générative dans une même offre. Bleu : ingénierie · rouge : data.</figcaption>
+      <div class="read-hint"><b>Comment lire :</b> chaque barre est une compétence ; sa longueur indique le pourcentage d'offres d'IA générative où elle apparaît aussi. Les compétences d'ingénierie (bleu) et de data (rouge) se mêlent — d'où un profil hybride.</div>
+      <div class="src">JOCAS (DARES) · n = 3 390 offres · 2024-2025</div>
+    </figure>
+    <div class="rise">
+      <div class="thread b-caract">◆ Volet 1 · caractériser — le « sous quelle forme »</div>
+      <p class="lead">Les compétences qui accompagnent l'IA générative dessinent un métier <strong>à cheval sur deux mondes</strong>.</p>
+      <div class="pop p1" style="display:flex; align-items:center; gap:.8rem; margin:1.2rem 0; justify-content:center">
+        <div style="text-align:center; padding:.9rem 1rem; border:2px solid var(--slate); border-radius:8px; background:rgba(47,74,99,.06); min-width:120px">
+          <div style="font-family:var(--data); font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--slate); margin-bottom:.3rem">Ingénierie</div>
+          <div class="small" style="color:#37444f; line-height:1.4">Python · Cloud<br>Docker / API</div>
+        </div>
+        <div class="pulse" style="font-family:var(--display); font-size:1.6rem; color:var(--signal); font-weight:600">+</div>
+        <div style="text-align:center; padding:.9rem 1rem; border:2px solid var(--signal); border-radius:8px; background:rgba(228,90,42,.08); min-width:120px">
+          <div style="font-family:var(--data); font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--signal); margin-bottom:.3rem">Science des données</div>
+          <div class="small" style="color:#37444f; line-height:1.4">Machine learning<br>Data science</div>
+        </div>
+      </div>
+      <div class="pop p3" style="text-align:center; color:var(--slate-soft); font-size:1.3rem; line-height:.6">↓</div>
+      <div class="pop p4" style="text-align:center; padding:.8rem 1rem; border-radius:8px; background:var(--ink); color:var(--paper); margin-top:.5rem">
+        <div style="font-family:var(--display); font-weight:600; font-size:1.15rem">Un profil hybride</div>
+        <div class="small" style="opacity:.85; margin-top:.2rem">ni pur développeur, ni pur data scientist</div>
+      </div>
+      <div class="pop p1b" style="margin-top:1rem; padding:.7rem .9rem; border-radius:8px; background:rgba(47,74,99,.05); border:1px solid var(--rule)">
+        <p class="small" style="color:#37444f; line-height:1.45; margin:0"><strong>Sur quoi ?</strong> Les <strong>n = 3 390 offres</strong> qui mentionnent LLM ou RAG (2024-2025). Pour chacune, je regarde <em>quelles autres compétences</em> apparaissent — c'est la co-occurrence.</p>
+      </div>
+      <div class="theo pop p5"><b>Abbott (1988)</b> → recomposition entre juridictions, exactement comme prévu</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 décalage -->
+<section class="slide">
+  <div class="eyebrow rise">Résultat 3 · H2</div>
+  <h2 class="rise">Un décalage non d'absence, mais de <span class="sig">granularité</span></h2>
+  <div class="cols">
+    <figure class="rise">
+      <svg viewBox="0 0 540 240" width="100%" font-family="IBM Plex Mono">
+        <line x1="42" y1="200" x2="500" y2="200" stroke="var(--rule)"/>
+        <line x1="42" y1="20" x2="42" y2="200" stroke="var(--rule)"/>
+        <!-- Y graduations -->
+        <g font-size="10" fill="var(--muted)" text-anchor="end">
+          <text x="34" y="203">0</text>
+          <line x1="39" y1="113" x2="500" y2="113" stroke="var(--rule)" opacity=".25"/><text x="34" y="116">15</text>
+          <line x1="39" y1="26" x2="500" y2="26" stroke="var(--rule)" opacity=".25"/><text x="34" y="29">30</text>
+        </g>
+        <!-- gap shading between market and referentiel -->
+        <path d="M42,198 L220,196 L300,182 L360,144 L410,92 L450,54 L490,26 L490,199 L42,199 Z" fill="var(--signal)" opacity=".07"/>
+        <!-- market demand -->
+        <path class="draw" d="M42,198 L220,196 L300,182 L360,144 L410,92 L450,54 L490,26" fill="none" stroke="var(--signal)" stroke-width="3"/>
+        <circle cx="490" cy="26" r="3" fill="var(--signal)"/>
+        <text x="300" y="96" font-size="11" fill="var(--signal)" font-weight="500">le marché demande</text>
+        <text x="300" y="110" font-size="9" fill="var(--muted)">LLM, RAG, MLOps…</text>
+        <!-- referentiel flat zero -->
+        <path class="draw d2" d="M42,199 L490,199" fill="none" stroke="var(--slate)" stroke-width="2.5"/>
+        <text x="120" y="216" font-size="11" fill="var(--slate)">le référentiel ne les code pas (= 0)</text>
+        <g font-size="10" fill="var(--muted)">
+          <text x="42" y="228" text-anchor="middle">2019</text>
+          <text x="490" y="228" text-anchor="middle">2025</text>
+        </g>
+        <text class="axis-title" transform="rotate(-90)" x="-110" y="14" text-anchor="middle">mentions / 1000 offres</text>
+      </svg>
+      <figcaption>Compétences d'IA générative : marché vs référentiel ROME.</figcaption>
+      <div class="read-hint"><b>Comment lire :</b> la courbe rouge, c'est la demande du marché (LLM, RAG, MLOps…), qui grimpe. La ligne grise plate, c'est le référentiel officiel : ces 5 compétences y sont codées <b>zéro fois</b>. Le décalage, c'est cet écart entre une demande croissante et une reconnaissance qui reste nulle.</div>
+      <div class="src">JOCAS × ROME (version sept. 2025)</div>
+    </figure>
+    <div class="rise">
+      <div class="thread b-decal">◆ Volet 2 · révéler le décalage</div>
+      <p class="lead">Le référentiel reconnaît bien les <strong>métiers</strong> de l'IA. Mais les <strong>compétences fines</strong> qui les composent en sont absentes.</p>
+      <div class="pop p1" style="margin-top:1rem; border:1px solid var(--rule); border-radius:6px; overflow:hidden">
+        <div style="display:flex; font-family:var(--data); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em">
+          <div style="flex:1; padding:.5rem .8rem; background:rgba(228,90,42,.08); color:var(--signal); font-weight:600">Demandé par le marché</div>
+          <div style="flex:1; padding:.5rem .8rem; background:rgba(47,74,99,.06); color:var(--slate); font-weight:600">Codé dans le ROME</div>
+        </div>
+        <div style="display:flex">
+          <div style="flex:1; padding:.7rem .8rem; display:flex; flex-direction:column; gap:.35rem">
+            <span class="jchip pop p2">LLM</span><span class="jchip pop p3">RAG</span><span class="jchip pop p4">MLOps</span><span class="jchip pop p5">deep learning</span><span class="jchip pop p6">IA générative</span>
+          </div>
+          <div style="flex:1; padding:.7rem .8rem; border-left:1px dashed var(--rule); display:flex; align-items:center; justify-content:center">
+            <div class="pop p6" style="text-align:center"><div style="font-family:var(--display); font-weight:600; font-size:3rem; color:var(--slate); line-height:1">0</div><div class="small" style="color:var(--muted)">sur 5</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="claim pop p7" style="border-color:var(--green); margin-top:.9rem">
+        <p class="small">Sur la <strong>quarantaine de compétences</strong> que je suis, ces <strong>5 compétences émergentes clés</strong> sont codées <strong>zéro fois</strong> dans le ROME (version sept. 2025, arborescence complète vérifiée).</p>
+        <p class="small" style="margin-top:.5rem">Et l'écart est mesurable : <strong>1 offre sur 5</strong> (Adzuna), <strong>1 sur 10</strong> (France Travail) demande une compétence hors référentiel.</p>
+        <div class="proof">recoupement · 1 311 offres IT du corpus de validation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 CLIMAX deux régimes -->
+<section class="slide">
+  <div class="eyebrow rise">Mon apport principal <span class="fn">· il fonde ma thèse</span></div>
+  <h2 class="rise">Il existe <span class="sl">deux régimes d'émergence</span> — et c'est ce qui justifie de ne pas prédire</h2>
+  <div class="cols">
+    <figure class="rise">
+      <svg viewBox="0 0 540 260" width="100%" font-family="IBM Plex Mono">
+        <line x1="42" y1="210" x2="510" y2="210" stroke="var(--rule)"/>
+        <line x1="42" y1="20" x2="42" y2="210" stroke="var(--rule)"/>
+        <!-- Y graduations -->
+        <g font-size="10" fill="var(--muted)" text-anchor="end">
+          <text x="34" y="213">0</text>
+          <line x1="39" y1="115" x2="510" y2="115" stroke="var(--rule)" opacity=".3"/><text x="34" y="118">10</text>
+          <line x1="39" y1="40" x2="510" y2="40" stroke="var(--rule)" opacity=".3"/><text x="34" y="43">20</text>
+        </g>
+        <!-- progressive : MLOps -->
+        <path class="draw" d="M42,208 L110,205 L155,188 L205,174 L255,144 L305,112 L355,88 L420,82 L510,86" fill="none" stroke="var(--slate)" stroke-width="3"/>
+        <circle cx="510" cy="86" r="3" fill="var(--slate)"/>
+        <text x="150" y="132" font-size="11" fill="var(--slate)" font-weight="500">MLOps · progressif</text>
+        <text x="150" y="146" font-size="9" fill="var(--muted)">montée sur ~23 mois</text>
+        <!-- rupture : LLM -->
+        <path class="draw d2" d="M42,209 L360,209 L378,207 L392,150 L402,66 L418,40" fill="none" stroke="var(--signal)" stroke-width="3"/>
+        <circle cx="418" cy="40" r="3" fill="var(--signal)"/>
+        <text x="424" y="44" font-size="11" fill="var(--signal)" font-weight="500">LLM · rupture</text>
+        <text x="424" y="58" font-size="9" fill="var(--muted)">2 mois, sans préavis</text>
+        <g font-size="10" fill="var(--muted)">
+          <text x="42" y="228" text-anchor="middle">2019</text>
+          <text x="510" y="228" text-anchor="middle">2023</text>
+        </g>
+        <text class="axis-title" transform="rotate(-90)" x="-115" y="14" text-anchor="middle">mentions / 1000 offres</text>
+        <text class="axis-title" x="276" y="250" text-anchor="middle">temps →</text>
+      </svg>
+      <figcaption>MLOps (progressif) vs grands modèles de langage (rupture).</figcaption>
+      <div class="read-hint"><b>Comment lire :</b> les deux courbes montent, mais pas pareil. La grise (MLOps) monte en pente douce sur ~23 mois : on la voit venir. La rouge (LLM) est presque verticale, 2 mois : impossible à anticiper.</div>
+      <div class="src">JOCAS (DARES) · 2019-2023</div>
+    </figure>
+    <div class="rise">
+      <div class="thread b-apport">★ Mon apport — la réponse de fond</div>
+      <p class="lead">En testant si l'on peut anticiper ces émergences, j'ai trouvé qu'elles n'ont pas toutes la même forme.</p>
+      <div class="regime prog">
+        <div class="rn">23<span style="font-size:.9rem"> mois</span></div>
+        <div class="rt"><div class="rlab">Régime progressif</div><div class="rtxt">Montée lente et régulière. <strong>On la voit venir</strong> — un vrai signal faible.</div></div>
+      </div>
+      <div class="regime rupt">
+        <div class="rn">2<span style="font-size:.9rem"> mois</span></div>
+        <div class="rt"><div class="rlab">Régime de rupture</div><div class="rtxt">Choc extérieur, sans préavis. <strong>Impossible à anticiper</strong>, même avec les meilleures données.</div></div>
+      </div>
+      <p class="muted small" style="margin-top:.7rem">Ce contraste <strong>fonde ma thèse</strong> : si une émergence sur deux surgit sans prévenir, prétendre tout prédire n'a pas de sens. Je caractérise — c'est la seule posture tenable.</p>
+      <div class="theo"><b>Ansoff (1975)</b> → je nuance : le signal faible n'existe qu'en régime progressif</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS VULGARISÉES : comment je sais que mes résultats tiennent -->
+<section class="slide">
+  <div class="eyebrow rise">Ma rigueur statistique <span class="fn">· distinguer un vrai écart du hasard</span></div>
+  <h2 class="rise">Quatre tests, chacun corrigeant <span class="sl">la limite du précédent</span></h2>
+  <div class="rise" style="margin-bottom:.3rem"><p class="small muted" style="max-width:84ch">Quand j'ai comparé les compétences entre métiers, une question s'est imposée : ces écarts sont-ils réels, ou dus au hasard ? J'ai construit un appareil statistique où chaque test comble le défaut du précédent.</p></div>
+  <div class="guards rise">
+    <div class="guard">
+      <div class="gico">χ²</div>
+      <div><div class="gtitle">Le chi² — le détecteur de fumée</div><div class="gq">« cet écart est-il réel, ou juste du hasard ? »</div><div class="ganswer">Il alerte quand une compétence est anormalement fréquente dans un métier. <strong>Son défaut :</strong> sur des milliers d'offres, il sonne pour le moindre écart, même minuscule.</div></div>
+    </div>
+    <div class="guard">
+      <div class="gico" style="font-size:1.1rem">V</div>
+      <div><div class="gtitle">Le V de Cramér — le thermomètre</div><div class="gq">« d'accord, mais c'est un GROS écart ? »</div><div class="ganswer">Le chi² dit qu'il y a de la fumée ; Cramér dit <strong>à quel point ça chauffe</strong>. Il mesure la force de l'écart, de 0 à 1, sans se laisser tromper par le volume.</div></div>
+    </div>
+    <div class="guard">
+      <div class="gico" style="font-size:1.1rem">B</div>
+      <div><div class="gtitle">Bonferroni — le garde-fou</div><div class="gq">« je teste 40 compétences d'un coup »</div><div class="ganswer">Posez la même question à 40 personnes : une dira « oui » par pur hasard. Bonferroni <strong>durcit le seuil</strong> pour ne garder que les vraies réponses.</div></div>
+    </div>
+    <div class="guard">
+      <div class="gico" style="font-size:1rem">±</div>
+      <div><div class="gtitle">Wilson — la marge du sondage</div><div class="gq">« quelle précision derrière ce 28 % ? »</div><div class="ganswer">Comme un sondage à « 52 % ±3 points ». Je ne dis jamais « 28 % » tout sec, mais <strong>une fourchette honnête</strong> autour de ce chiffre.</div></div>
+    </div>
+  </div>
+  <div class="rise" style="margin-top:1rem; padding:.85rem 1.2rem; border-radius:8px; background:rgba(61,107,74,.08); border-left:3px solid var(--green); text-align:center; max-width:82ch; margin-left:auto; margin-right:auto">
+    <span style="font-size:.9rem; color:#37444f"><strong>Et ça a changé mes conclusions :</strong> des écarts qui sautaient aux yeux se sont révélés faibles une fois mesurés. La méthode a corrigé mon interprétation — c'est exactement à ça qu'elle sert.</span>
+  </div>
+</section>
+
+<!-- 13 DIALOGUE AVEC LA LITTERATURE -->
+<section class="slide">
+  <div class="eyebrow rise">Ce que mes résultats disent à la théorie <span class="fn">· je ne me contente pas d'illustrer</span></div>
+  <h2 class="rise">Un <span class="sl">dialogue</span> avec la littérature : je confirme, je nuance, je m'interdis de trancher</h2>
+  <div class="postures rise">
+    <div class="pcard c-confirm">
+      <div style="font-size:1.5rem; margin-bottom:.3rem">✓</div>
+      <div class="pverb">Je confirme</div>
+      <div class="pauth">Abbott · 1988</div>
+      <div class="pmine"><strong>Sa théorie :</strong> une compétence nouvelle se propage d'un métier à l'autre dans un ordre précis, selon qui « s'en empare » en premier.<br><br><strong>Mon résultat :</strong> l'ordre que j'observe — développement, puis sécurité, puis data — colle exactement. Ça lui donne raison, sur mes données.</div>
+    </div>
+    <div class="pcard c-nuance">
+      <div style="font-size:1.5rem; margin-bottom:.3rem">◐</div>
+      <div class="pverb">Je nuance</div>
+      <div class="pauth">Ansoff · 1975</div>
+      <div class="pmine"><strong>Sa théorie :</strong> avant tout grand changement, il y aurait des signes avant-coureurs qu'on peut apprendre à repérer — le « signal faible ».<br><br><strong>Ma nuance :</strong> ça ne marche que pour les montées lentes. Une rupture brutale ne laisse aucun signe. Je limite donc sa théorie à ce seul cas.</div>
+    </div>
+    <div class="pcard c-debat">
+      <div style="font-size:1.5rem; margin-bottom:.3rem">⊘</div>
+      <div class="pverb">Je ne tranche pas</div>
+      <div class="pauth">Frey &amp; Osborne · 2017</div>
+      <div class="pmine"><strong>Le débat :</strong> l'IA détruit-elle des emplois, ou les transforme-t-elle sans en supprimer ?<br><br><strong>Ma position :</strong> je ne réponds pas, honnêtement. Mes données mesurent des compétences demandées, pas des emplois créés ou perdus.</div>
+    </div>
+  </div>
+  <p class="rise muted small footnote" style="margin-top:1.2rem">Je ne me contente pas d'illustrer ces théories : <strong>je les teste, et je les corrige</strong>.</p>
+</section>
+
+<!-- 14 OUVERTURE valeur publics -->
+<section class="slide">
+  <div class="eyebrow rise">J'ouvre l'entonnoir <span class="fn">· vers mes publics</span></div>
+  <h2 class="rise">Ce que mon travail permet, concrètement</h2>
+  <div class="value rise">
+    <div class="v">
+      <div style="margin-bottom:.6rem"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6"><path d="M2 8l10-5 10 5-10 5z"/><path d="M6 10v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></div>
+      <div class="who">Organismes de formation</div>
+      <div class="num" style="color:var(--signal)">1 à 2 <span class="u">ans</span></div>
+      <div class="gain">d'avance sur les référentiels</div>
+      <p>Orienter l'offre vers les compétences déjà demandées, sans attendre une mise à jour qui a des années de retard.</p>
+    </div>
+    <div class="v">
+      <div style="margin-bottom:.6rem"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><circle cx="17" cy="9" r="2.2"/><path d="M15.5 15c2.8.2 5.5 1.8 5.5 5"/></svg></div>
+      <div class="who">Directions RH</div>
+      <div class="num" style="color:var(--signal)">2 <span class="u">leviers</span></div>
+      <div class="gain">former ou recruter, à bon escient</div>
+      <p>Compétence progressive → formation interne. Compétence en rupture → recrutement, faute de vivier.</p>
+    </div>
+    <div class="v">
+      <div style="margin-bottom:.6rem"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V9l7-4 7 4v12"/><path d="M9 21v-5h6v5"/></svg></div>
+      <div class="who">Acteurs publics</div>
+      <div class="num" style="color:var(--signal)">en <span class="u">continu</span></div>
+      <div class="gain">mesurer son propre décalage</div>
+      <p>Un niveau « compétence » actualisable, à partir de données déjà produites — JOCAS.</p>
+    </div>
+  </div>
+  <p class="rise muted small footnote" style="margin-top:1.2rem">Dans les trois cas, l'information est <strong>directement exploitable</strong> : elle décrit une tendance observée sur le marché réel, chiffrée et datée.</p>
+</section>
+
+<!-- 14 LIMITES -->
+<section class="slide">
+  <div class="eyebrow rise">Limites <span class="fn">· hiérarchisées, non juxtaposées</span></div>
+  <h2 class="rise">Ce que mon travail ne permet pas — et je le délimite</h2>
+  <div class="limscale rise">
+    <div class="limrow l1">
+      <div class="weight"><div class="wbar"></div></div>
+      <div class="lcontent"><div class="wlab">poids fort</div><div class="lh">Un seul secteur</div><div class="lp">Analyse restreinte à l'informatique : pas d'extension sans vérification — c'est ma première voie de recherche.</div></div>
+    </div>
+    <div class="limrow l2">
+      <div class="weight"><div class="wbar"></div></div>
+      <div class="lcontent"><div class="wlab">poids mesuré</div><div class="lh">Une détection par lexique</div><div class="lp">Je ne repère que des compétences anticipées. Une compétence radicalement nouvelle peut m'échapper — limite que j'assume.</div></div>
+    </div>
+    <div class="limrow l3">
+      <div class="weight"><div class="wbar"></div></div>
+      <div class="lcontent"><div class="wlab">n'entame pas le cœur</div><div class="lh">Concordance, non causalité</div><div class="lp">Je mesure une concordance temporelle forte ; je ne prétends jamais établir une cause.</div></div>
+    </div>
+  </div>
+  <p class="rise muted small footnote" style="margin-top:1.2rem">Je les <strong>hiérarchise</strong>, je ne les juxtapose pas : dire exactement où mes résultats tiennent, c'est ce qui les rend solides.</p>
+</section>
+
+<!-- 15 CONCLUSION -->
+<section class="slide closing">
+  <div class="eyebrow rise">Conclusion <span class="fn">· ce que je retiens</span></div>
+  <h1 class="rise">Un instrument d'observation à <span class="sl">haute résolution</span> — non de <span class="sig">prévision des chocs</span></h1>
+  <div class="rise" style="display:flex; gap:2.5rem; flex-wrap:wrap; margin:1.6rem 0 1.4rem">
+    <div style="flex:1; min-width:180px; border-top:2px solid var(--slate); padding-top:.7rem">
+      <div class="data small" style="color:var(--slate); margin-bottom:.3rem">J'observe</div>
+      <p class="small" style="max-width:26ch">L'émergence des compétences IA est datable, mesurable, et localisable métier par métier.</p>
+    </div>
+    <div style="flex:1; min-width:180px; border-top:2px solid var(--signal); padding-top:.7rem">
+      <div class="data small" style="color:var(--signal); margin-bottom:.3rem">Je révèle</div>
+      <p class="small" style="max-width:26ch">Un décalage de granularité : le marché demande ce que les référentiels ne codent pas encore.</p>
+    </div>
+    <div style="flex:1; min-width:180px; border-top:2px solid var(--green); padding-top:.7rem">
+      <div class="data small" style="color:var(--green); margin-bottom:.3rem">Je démontre</div>
+      <p class="small" style="max-width:26ch">Deux régimes d'émergence — et pourquoi caractériser, plutôt que prédire, est la seule posture tenable.</p>
+    </div>
+    <div style="flex:1; min-width:180px; border-top:2px solid var(--gold); padding-top:.7rem">
+      <div class="data small" style="color:var(--gold); margin-bottom:.3rem">Je livre</div>
+      <p class="small" style="max-width:26ch">Une méthode reproductible : transposable à tout secteur en changeant le lexique et les codes métier.</p>
+    </div>
+  </div>
+  <div class="rise" style="margin:1.8rem 0 0; padding:1.5rem 1.8rem; border-radius:10px; background:linear-gradient(135deg, var(--ink), #1a2c3d); position:relative; overflow:hidden">
+    <div style="position:absolute; top:-20px; right:20px; font-family:var(--display); font-size:7rem; color:#ffffff; opacity:.08; line-height:1">"</div>
+    <p style="font-family:var(--display); font-weight:600; font-size:1.7rem; line-height:1.15; margin:0; max-width:none; color:#FBFAF7">Bien voir le présent vaut mieux que mal deviner l'avenir.</p>
+    <p style="font-size:.9rem; line-height:1.5; margin:.7rem 0 0; color:#FBFAF7; opacity:.82; max-width:60ch">C'est ce que mon travail rend possible : une lecture précise, datée et vérifiable de compétences qui, sans ces données, resteraient invisibles jusqu'à ce qu'il soit trop tard.</p>
+  </div>
+  <div class="q-invite rise">Je vous remercie — je réponds à vos questions</div>
+</section>
+
+<!-- 16 Q&A — MASQUÉE (retirée du diaporama, conservée dans le fichier) -->
+<section class="slide-hidden" style="display:none">
+  <div class="eyebrow rise">Backup · questions du jury</div>
+  <h2 class="rise" style="margin-bottom:.8rem">Objections anticipées</h2>
+  <div class="qa-wrap rise">
+    <div class="qa"><button><span class="qn">Q1</span><span>Pourquoi une démarche quantitative plutôt que des entretiens sur un sujet de transformation du travail ?</span><span class="chev">+</span></button><div class="ans"><p>Parce que l'objet impose l'échelle. Détecter des dynamiques d'émergence suppose d'observer des milliers d'offres sur plusieurs années — hors de portée d'un entretien, qui restitue un point de vue situé, riche mais isolé. Je cherchais des régularités transversales. Ma posture reste toutefois interprétative : les régularités observées et le cadre théorique se répondent en permanence, et les résultats sont discutés, non appliqués comme un verdict.</p></div></div>
+    <div class="qa"><button><span class="qn">Q2</span><span>Écarter LinkedIn, n'est-ce pas se priver de la source la plus riche ?</span><span class="chev">+</span></button><div class="ans"><p>Sur le volume, si. Mais les conditions générales de LinkedIn interdisent explicitement la collecte automatisée, et la finalité de recherche ne lève pas une interdiction contractuelle. J'ai fait le choix de la licéité — c'est une condition de validité du travail, pas une contrainte subie. Et la base JOCAS, produite par la statistique publique, offre en réalité une profondeur historique que LinkedIn n'aurait pas donnée.</p></div></div>
+    <div class="qa"><button><span class="qn">Q3</span><span>La détection par mots-clés ne rate-t-elle pas les compétences les plus nouvelles ?</span><span class="chev">+</span></button><div class="ans"><p>Si, et je l'assume comme la contrepartie d'un choix. J'ai privilégié la transparence et la reproductibilité : chaque détection est explicable et vérifiable, là où des méthodes plus puissantes seraient des boîtes noires. Pour un dispositif de preuve, cette explicabilité prime. Je propose d'ailleurs des méthodes plus avancées comme prolongement, précisément pour capter l'inattendu.</p></div></div>
+    <div class="qa"><button><span class="qn">Q4</span><span>La primauté du développement n'est-elle pas un simple effet de vocabulaire des offres ?</span><span class="chev">+</span></button><div class="ans"><p>L'objection est sérieuse. Elle est affaiblie par la cohérence de l'ensemble : un simple biais lexical n'expliquerait ni l'ordre temporel très net de la diffusion, ni le retrait des métiers de la data, pourtant les plus proches scientifiquement. L'hypothèse d'une diffusion par proximité d'usage rend mieux compte de l'ensemble des observations.</p></div></div>
+    <div class="qa"><button><span class="qn">Q5</span><span>La concordance avec ChatGPT : n'est-ce pas confondre corrélation et causalité ?</span><span class="chev">+</span></button><div class="ans"><p>Je ne prétends jamais à la causalité, délibérément. Je mesure une concordance forte, encadrée par deux garde-fous : la spécificité du signal — seuls LLM et RAG bougent — et le recoupement sur trois sources indépendantes. Cette limite causale n'entame pas les constats descriptifs, qui constituent le cœur de mon travail.</p></div></div>
+    <div class="qa"><button><span class="qn">Q6</span><span>Vos résultats se limitent à l'informatique. Quelle portée réelle ?</span><span class="chev">+</span></button><div class="ans"><p>C'est ma limite la plus lourde, je la place en premier : aucune conclusion ne s'étend sans vérification. Mais le choix est justifié — l'informatique est le secteur où la recomposition par l'IA est la plus précoce et mesurable. Et la base JOCAS couvrant tous les métiers, la même méthode s'applique à la santé, la finance, le marketing. C'est ma première voie de recherche.</p></div></div>
+    <div class="qa"><button><span class="qn">Q7</span><span>Vous évoquez une itération abandonnée dans votre classement. Laquelle, et pourquoi ?</span><span class="chev">+</span></button><div class="ans"><p>Ma première version d'un score comparait la période récente à l'ancienne. Mais un trimestre de collecte était surreprésenté, ce qui gonflait artificiellement certaines compétences — le mot « algorithme » obtenait un score aberrant, reflet de la date, pas d'une émergence. Je l'ai abandonnée et recalculée sur un corpus équilibré. Je l'ai laissée dans le mémoire, car documenter une itération corrigée fait partie de la démarche scientifique.</p></div></div>
+    <div class="qa"><button><span class="qn">Q8</span><span>Comment ce travail s'inscrit-il dans votre projet professionnel ?</span><span class="chev">+</span></button><div class="ans"><p>Il condense ce que je souhaite faire : transformer des données ouvertes ou internes en instruments de décision pour des équipes non techniques. À Kampus, j'ai construit des outils réellement adoptés — tableaux de bord, aide à la prospection. Je cherche un poste en data où la rigueur d'analyse et le sens de la restitution servent directement le pilotage.</p></div></div>
+  </div>
+</section>
+
+</div>
+
+<div class="hud">
+  <div class="phase descente" id="phase"><span class="fn-dot"></span><span id="phase-label">Descente · cadrage</span></div>
+  <div class="chrono" id="chrono" title="Clic : démarrer/pause · double-clic : reset"><b id="ctime">00:00</b> <span class="hint">/ 10:00</span></div>
+  <div class="pill"><span id="cur">1</span>/<span id="tot">16</span></div>
+  <div class="progress"><i id="bar"></i></div>
+  <div class="hint">← → · P chrono</div>
+</div>
+
+<script>
+// phase = funnel movement label + class
+const phases=[
+ ["descente","Descente · titre"],["descente","Descente · cadrage large"],["descente","Descente · pour qui, pourquoi"],["descente","Descente · resserrement"],["descente","Descente · ma question"],
+ ["dispositif","Dispositif · la source JOCAS"],["dispositif","Dispositif · détection"],["dispositif","Dispositif · hypothèses"],
+ ["remontee","Charnière · ma question, 2 volets"],
+ ["remontee","Remontée · résultat 1 · rupture"],["remontee","Remontée · résultat 2 · diffusion"],["remontee","Remontée · profil"],["remontee","Remontée · résultat 3 · décalage"],["remontee","Remontée · apport · deux régimes"],
+ ["remontee","Remontée · ma rigueur statistique"],
+ ["remontee","Remontée · dialogue théorique"],
+ ["ouverture","Ouverture · publics"],["ouverture","Ouverture · limites"],["ouverture","Conclusion"]
+];
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+const cur=document.getElementById('cur'),bar=document.getElementById('bar'),phaseEl=document.getElementById('phase'),phaseLabel=document.getElementById('phase-label');
+document.getElementById('tot').textContent=slides.length;
+function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,k)=>s.classList.toggle('active',k===i));cur.textContent=i+1;bar.style.width=(i/(slides.length-1)*100)+'%';const ph=phases[i]||["","",""];phaseEl.className='phase '+ph[0];phaseLabel.textContent=ph[1]}
+function next(){show(i+1)}function prev(){show(i-1)}
+document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next()}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);else if(k==='p')toggleChrono()});
+let sx=0;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});document.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>50){d<0?next():prev()}},{passive:true});
+let t=0,run=null;const ctime=document.getElementById('ctime'),chrono=document.getElementById('chrono');
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function tick(){t++;ctime.textContent=fmt(t);if(t>=600)chrono.classList.add('warn')}
+function toggleChrono(){if(run){clearInterval(run);run=null}else{run=setInterval(tick,1000)}}
+chrono.addEventListener('click',toggleChrono);chrono.addEventListener('dblclick',()=>{clearInterval(run);run=null;t=0;ctime.textContent='00:00';chrono.classList.remove('warn')});
+document.querySelectorAll('.qa button').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));
+show(0);
+</script>
+</body>
+</html>
